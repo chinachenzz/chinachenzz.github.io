@@ -1,0 +1,756 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="en">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT">
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="卷积神经网络VGG16这么简单，为什么没人能说清？2018-07-15 18:43 很多人想入门做深度学习，但往往翻遍网络看完一篇又一篇所谓的“入门教程”，paper，包括很多深度学习框架官方给出的案例，给人的感觉真的是从入门到放弃。写教程的作者有很多都是技术大神，但写出的东西真的是把原本简简单单的理论说得晦涩难懂，模凌两可。比如说VGG16，都是摆上从论文里截过来的下面这张图：  或者给出像下面">
+<meta property="og:type" content="article">
+<meta property="og:title" content="VGG-16模型">
+<meta property="og:url" content="http://yoursite.com/2019/09/24/VGG-16模型/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="卷积神经网络VGG16这么简单，为什么没人能说清？2018-07-15 18:43 很多人想入门做深度学习，但往往翻遍网络看完一篇又一篇所谓的“入门教程”，paper，包括很多深度学习框架官方给出的案例，给人的感觉真的是从入门到放弃。写教程的作者有很多都是技术大神，但写出的东西真的是把原本简简单单的理论说得晦涩难懂，模凌两可。比如说VGG16，都是摆上从论文里截过来的下面这张图：  或者给出像下面">
+<meta property="og:locale" content="en">
+<meta property="og:image" content="http://5b0988e595225.cdn.sohucs.com/images/20180715/840ebea73b1b4f1fa7f5ad496ec6ae6c.jpeg">
+<meta property="og:image" content="http://5b0988e595225.cdn.sohucs.com/images/20180715/e9fd04d524814a239891a8d786d0aa97.jpeg">
+<meta property="og:image" content="http://5b0988e595225.cdn.sohucs.com/images/20180715/7b0a8af806b940fd86c62e3884f770bb.jpeg">
+<meta property="og:image" content="http://5b0988e595225.cdn.sohucs.com/images/20180715/54ea427933f94b588a087bbd42e0c6b9.gif">
+<meta property="og:image" content="http://5b0988e595225.cdn.sohucs.com/images/20180715/d4bb317688cf4f20b98ecef61a137b7b.jpeg">
+<meta property="og:image" content="http://5b0988e595225.cdn.sohucs.com/images/20180715/0640c2c6b25847a99883432b8816a3c6.jpeg">
+<meta property="og:image" content="http://5b0988e595225.cdn.sohucs.com/images/20180715/f70b4f66555c4ace8756c3eb59fc10f9.gif">
+<meta property="og:image" content="http://5b0988e595225.cdn.sohucs.com/images/20180715/5cea91f9793a47da8928ae5a83037ddb.jpeg">
+<meta property="og:image" content="http://5b0988e595225.cdn.sohucs.com/images/20180715/9bb7534dc4a44496a995dc5c30cac0cd.jpeg">
+<meta property="og:image" content="http://5b0988e595225.cdn.sohucs.com/images/20180715/ca4c345db12d47b39292b72d26bde1d2.jpeg">
+<meta property="og:image" content="http://5b0988e595225.cdn.sohucs.com/images/20180715/322c7459926140c69be4b12c9a845daa.jpeg">
+<meta property="og:image" content="http://5b0988e595225.cdn.sohucs.com/images/20180715/02abff950f5f43f4b98b20dbd3fc83b6.jpeg">
+<meta property="og:image" content="http://5b0988e595225.cdn.sohucs.com/images/20180715/f4d81d07100446b992307b8b77163ca5.jpeg">
+<meta property="og:image" content="http://5b0988e595225.cdn.sohucs.com/images/20180715/c3194a9f29ff4c3f8fc6f56621f611a3.jpeg">
+<meta property="og:image" content="http://5b0988e595225.cdn.sohucs.com/images/20180715/14c14d9603324e1f9b4c4ac9387458a4.jpeg">
+<meta property="og:image" content="http://5b0988e595225.cdn.sohucs.com/images/20180715/fd4c84fd69954c1296da2193d9145368.jpeg">
+<meta property="og:image" content="http://5b0988e595225.cdn.sohucs.com/images/20180715/f385f9cafc3e4d30a50ae5a823c4a80f.jpeg">
+<meta property="og:updated_time" content="2019-09-24T02:27:35.084Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="VGG-16模型">
+<meta name="twitter:description" content="卷积神经网络VGG16这么简单，为什么没人能说清？2018-07-15 18:43 很多人想入门做深度学习，但往往翻遍网络看完一篇又一篇所谓的“入门教程”，paper，包括很多深度学习框架官方给出的案例，给人的感觉真的是从入门到放弃。写教程的作者有很多都是技术大神，但写出的东西真的是把原本简简单单的理论说得晦涩难懂，模凌两可。比如说VGG16，都是摆上从论文里截过来的下面这张图：  或者给出像下面">
+<meta name="twitter:image" content="http://5b0988e595225.cdn.sohucs.com/images/20180715/840ebea73b1b4f1fa7f5ad496ec6ae6c.jpeg">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2019/09/24/VGG-16模型/">
+
+
+
+
+
+  <title>VGG-16模型 | Hexo</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="en">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Hexo</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            Archives
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/09/24/VGG-16模型/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="John Doe">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hexo">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">VGG-16模型</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-09-24T10:20:54+08:00">
+                2019-09-24
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="卷积神经网络VGG16这么简单，为什么没人能说清？"><a href="#卷积神经网络VGG16这么简单，为什么没人能说清？" class="headerlink" title="卷积神经网络VGG16这么简单，为什么没人能说清？"></a>卷积神经网络VGG16这么简单，为什么没人能说清？</h1><p>2018-07-15 18:43</p>
+<p>很多人想入门做深度学习，但往往翻遍网络看完一篇又一篇所谓的“入门教程”，paper，包括很多深度学习框架官方给出的案例，给人的感觉真的是从入门到放弃。写教程的作者有很多都是技术大神，但写出的东西真的是把原本简简单单的理论说得晦涩难懂，模凌两可。比如说VGG16，都是摆上从论文里截过来的下面这张图：</p>
+<p><img src="http://5b0988e595225.cdn.sohucs.com/images/20180715/840ebea73b1b4f1fa7f5ad496ec6ae6c.jpeg" alt="img"></p>
+<p>或者给出像下面的架构图：</p>
+<p><img src="http://5b0988e595225.cdn.sohucs.com/images/20180715/e9fd04d524814a239891a8d786d0aa97.jpeg" alt="img"></p>
+<p>对于数据从输入到输出，中间是如何变化的，神经元个数，参数个数又是怎么变化的，如何自己设计一个合理的CNN网络等等，没有教程能把这些说清楚，推荐看吴恩达老师的课程视频，对英文不好的童鞋其实是很吃力的。入门其实并不难，内容也不难理解，倒是被千篇一律的教程带进沟来。</p>
+<p>VGG16本来就简单，但是越简单的东西”大牛”们往往不想去解释，说是“入门教程”，基础的不解释怎么教人入门。</p>
+<p>现在详细介绍VGG16 , 需要补充一点神经网络的知识，9行Python代码搭建神经网络来掌握一些基本概念</p>
+<p><strong>一张图片如何作为输入？</strong></p>
+<p>如下图，彩色图像有RGB三个色值通道，分别表示红、绿、蓝，每个通道内的像素可以用一个像下图右边的二维数组表示，数值代表0-255之间的像素值。假设一张900<em>600的彩色的图片，计算机里面可以用 (900</em>600*3)的数组表示。</p>
+<p><img src="http://5b0988e595225.cdn.sohucs.com/images/20180715/7b0a8af806b940fd86c62e3884f770bb.jpeg" alt="img"></p>
+<p><strong>什么是卷积</strong></p>
+<p>卷积过程是基于一个小矩阵，也就是卷积核，在上面所说的每层像素矩阵上不断按步长扫过去的，扫到数与卷积核对应位置的数相乘，然后求总和，每扫一次，得到一个值，全部扫完则生成一个新的矩阵。如下图</p>
+<p><img src="http://5b0988e595225.cdn.sohucs.com/images/20180715/54ea427933f94b588a087bbd42e0c6b9.gif" alt="img"></p>
+<p>卷积核如何设置可以参考卷积神经网络的卷积核大小、个数，卷积层数如何确定呢？一般取(3,3)的小矩阵，卷积核里面每个值就是我们需要寻找（训练）的神经元参数(权重)，开始会随机有个初始值，当训练网络时，网络会通过后向传播不断更新这些参数值，直到寻找到最佳的参数值。如何知道是“最佳”？是通过损失函数去评估。</p>
+<p>卷积核的步长是指卷积核每次移动几个格子，有横行和纵向两个方向。</p>
+<p>卷积操作相当于特征提取，卷积核相当于一个过滤器，提取我们需要的特征。</p>
+<p>如下图，左边小红色框是卷积核，从左上角扫到右下角，最终得到右边的特征图谱。</p>
+<p>卷积：如何成为一个很厉害的神经网络</p>
+<p><img src="http://5b0988e595225.cdn.sohucs.com/images/20180715/d4bb317688cf4f20b98ecef61a137b7b.jpeg" alt="img"></p>
+<p><strong>什么是Padding</strong></p>
+<p>卷积操作之后维度变少，得到的矩阵比原来矩阵小，这样不好计算，而我们只是希望作卷积，所以我们需要Padding，<strong>在每次卷积操作之前</strong>，在原矩阵外边补包一层0，可以只在横向补，或只在纵向补，或者四周都补0，从而使得卷积后输出的图像跟输入图像在尺寸上一致。</p>
+<p>比如：我们需要做一个300<em>300的原始矩阵的卷积，用一个3</em>3卷积核来扫，扫出来结果的矩阵应该是：298*298的矩阵，变小了。</p>
+<p>卷积前加 <strong>Padding</strong> 操作补一圈0，即300<em>300矩阵外面周围加一圈“0”，这样的300</em>300就变成了302<em>302的矩阵，再进行卷积出来就是300</em>300 ，尺寸和原图一样。</p>
+<p><img src="http://5b0988e595225.cdn.sohucs.com/images/20180715/0640c2c6b25847a99883432b8816a3c6.jpeg" alt="img"></p>
+<p><strong>什么是池化(pooling)</strong></p>
+<p>卷积操作后我们提取了很多特征信息，相邻区域有相似特征信息，可以相互替代的，如果全部保留这些特征信息就会有信息冗余，增加了计算难度，这时候池化就相当于降维操作。池化是在一个小矩阵区域内，取该区域的最大值或平均值来代替该区域，该小矩阵的大小可以在搭建网络的时候自己设置。小矩阵也是从左上角扫到右下角。如下图</p>
+<p><img src="http://5b0988e595225.cdn.sohucs.com/images/20180715/f70b4f66555c4ace8756c3eb59fc10f9.gif" alt="img"></p>
+<p><strong>什么是Flatten</strong></p>
+<p>Flatten 是指将多维的矩阵拉开，变成一维向量来表示。</p>
+<p><strong>什么是全连接层</strong></p>
+<p>对n-1层和n层而言，n-1层的任意一个节点，都和第n层所有节点有连接。即第n层的每个节点在进行计算的时候，激活函数的输入是n-1层所有节点的加权。像下面的<strong>中间层</strong>就是全连接方式。</p>
+<p><img src="http://5b0988e595225.cdn.sohucs.com/images/20180715/5cea91f9793a47da8928ae5a83037ddb.jpeg" alt="img"></p>
+<p><strong>什么是Dropout</strong></p>
+<p>dropout是指在网络的训练过程中，按照一定的概率将网络中的神经元丢弃，这样有效防止过拟合。</p>
+<p>现在我们来看看VGG16的整天架构图：</p>
+<p><img src="http://5b0988e595225.cdn.sohucs.com/images/20180715/9bb7534dc4a44496a995dc5c30cac0cd.jpeg" alt="img"></p>
+<p>从左至右，一张彩色图片输入到网络，白色框是卷积层，红色是池化，蓝色是全连接层，棕色框是预测层。预测层的作用是将全连接层输出的信息转化为相应的类别概率，而起到分类作用。</p>
+<p>可以看到 VGG16 是13个卷积层+3个全连接层叠加而成。</p>
+<p><strong>以下是一个基于kares 的VGG6 代码：</strong></p>
+<p><strong>完整代码地址：</strong></p>
+<p><img src="http://5b0988e595225.cdn.sohucs.com/images/20180715/ca4c345db12d47b39292b72d26bde1d2.jpeg" alt="img"></p>
+<p>详细解释一下代码</p>
+<p>网络开始输入(3,224,224)的图像数据，即一张宽224，高244的彩色RGB图片，同时补了一圈0 </p>
+<p>ZeroPadding2D((1,1)</p>
+<p>这个函数是指在横向和纵向，即四周都补0</p>
+<p>接着是卷积层。有64个(3,3)的卷积核，激活函数是relu ,</p>
+<p>model.add(Convolution2D(64, 3, 3, activation=’relu’))</p>
+<p>一个卷积核扫完图片，生成一个新的矩阵，64个就生成64 层。</p>
+<p>接着是补0，接着再来一次卷积。此时图像数据是64<em>224</em>224</p>
+<p>model.add(ZeroPadding2D((1,1)))</p>
+<p>model.add(Convolution2D(64, 3, 3, activation=’relu’))</p>
+<p>接着是池化，小矩阵是(2,2) ，步长(2,2),指的是横向每次移动2格，纵向每次移动2格。</p>
+<p>model.add(MaxPooling2D((2,2), strides=(2,2)))</p>
+<p>按照这样池化之后，数据变成了64<em>112</em>112，矩阵的宽高由原来的224减半，变成了112</p>
+<p>再往下，同理，只不过是卷积核个数依次变成128，256，512，而每次按照这样池化之后，矩阵都要缩小一半。</p>
+<p>13层卷积和池化之后，数据变成了 512<em>7</em>7 </p>
+<p>然后Flatten()，将数据拉平成向量，变成一维512<em>7</em>7=25088</p>
+<p>接着是3个全连接层</p>
+<p><img src="http://5b0988e595225.cdn.sohucs.com/images/20180715/322c7459926140c69be4b12c9a845daa.jpeg" alt="img"></p>
+<p>这里很少有人解释为什么全连接层里有4096 个神经元，其他数行不行？</p>
+<p>其实这里4096只是个经验值，其他数当然可以，试试效果，只要不要小于要预测的类别数，这里要预测的类别有1000种，所以最后预测的全连接有1000个神经元。如果你想用VGG16 给自己的数据作分类任务，这里就需要改成你预测的类别数。</p>
+<p>至此VGG16整个网络架构以及数据变化都清楚了。</p>
+<p>如果要设计其他类型的CNN网络，就是将这些基本单元比如卷积层个数、全连接个数按自己需要搭配变换，是不是很简单？</p>
+<p>下面我们再来解释一下VGG16里面参数个数如何变化</p>
+<p><img src="http://5b0988e595225.cdn.sohucs.com/images/20180715/02abff950f5f43f4b98b20dbd3fc83b6.jpeg" alt="img"></p>
+<p>这里主要看两列数据，一个是memory , 表示的是数据流变化。</p>
+<p>一个是weights 表示的是参数变化。作卷积的时候才有参数，即卷积核内的值。全连接的神经元也有参数，一个神经元包含一个权重值。</p>
+<p>刚开始是彩色图像3层色值通道，每层64个 (3,3) 的卷积核，所以参数个数是3<em>64</em>3*3</p>
+<p>第一次卷积之后，数据变成64* 224<em>224，即有64层宽224，高224的矩阵数据，再次卷积时，还是每层64个 (3,3) 的卷积核，参数个数变成64</em>64<em>3</em>3，往下都是以此类推。</p>
+<p>我们看到参数个数最多时达到1600万个，要是更大的图片参数会更多，普通计算机要训练这么庞大的参数会很卡，所以很多人做深度学习的就要求配置GPU 来提高训练速度。</p>
+<p><strong>下面用VGG16 来做一个图像识别案例：</strong></p>
+<p><strong>完整代码地址：</strong></p>
+<p>VGG16 是基于大量真实图像的 ImageNet 图像库预训练的网络</p>
+<p>vgg16对应的供keras使用的模型人家已经帮我们训练好，我们将学习好的 VGG16 的权重迁移（transfer）到自己的卷积神经网络上作为网络的初始权重，这样我们自己的网络不用从头开始从大量的数据里面训练，从而提高训练速度。这里的迁移就是平时所说的迁移学习。</p>
+<p>对应的模型已经下载好来，可以通过上面的方式获取。</p>
+<p><img src="http://5b0988e595225.cdn.sohucs.com/images/20180715/f4d81d07100446b992307b8b77163ca5.jpeg" alt="img"></p>
+<p><img src="http://5b0988e595225.cdn.sohucs.com/images/20180715/c3194a9f29ff4c3f8fc6f56621f611a3.jpeg" alt="img"></p>
+<p><img src="http://5b0988e595225.cdn.sohucs.com/images/20180715/14c14d9603324e1f9b4c4ac9387458a4.jpeg" alt="img"></p>
+<p>预测2</p>
+<p><img src="http://5b0988e595225.cdn.sohucs.com/images/20180715/fd4c84fd69954c1296da2193d9145368.jpeg" alt="img"></p>
+<p>预测3</p>
+<p><img src="http://5b0988e595225.cdn.sohucs.com/images/20180715/f385f9cafc3e4d30a50ae5a823c4a80f.jpeg" alt="img"></p>
+<p>准确率还是不错的！</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/09/24/python爬取网页所有链接/" rel="next" title="python爬取网页所有链接">
+                <i class="fa fa-chevron-left"></i> python爬取网页所有链接
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">John Doe</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">7</span>
+                  <span class="site-state-item-name">posts</span>
+                </a>
+              </div>
+            
+
+            
+
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#卷积神经网络VGG16这么简单，为什么没人能说清？"><span class="nav-number">1.</span> <span class="nav-text">卷积神经网络VGG16这么简单，为什么没人能说清？</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">John Doe</span>
+
+  
+</div>
+
+
+  <div class="powered-by">Powered by <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a></div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Muse</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

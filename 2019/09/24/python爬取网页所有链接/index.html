@@ -79,17 +79,17 @@
 
 
 
-<meta name="description" content="Welcome to Hexo! This is your very first post. Check documentation for more info. If you get any problems when using Hexo, you can find the answer in troubleshooting or you can ask me on GitHub. Quick">
+<meta name="description" content="版权声明：本文为博主原创文章，遵循 CC 4.0 BY-SA 版权协议，转载请附上原文出处链接和本声明。本文链接：https://blog.csdn.net/qq_36369941/article/details/88411464python3 实现爬取网站下所有URL 获取首页元素信息：首页的URL链接获取：遍历第一次返回的结果：递归循环遍历：全部代码如下：小结：python3.6request">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Hello World">
-<meta property="og:url" content="http://yoursite.com/2019/09/23/hello-world/index.html">
+<meta property="og:title" content="python爬取网页所有链接">
+<meta property="og:url" content="http://yoursite.com/2019/09/24/python爬取网页所有链接/index.html">
 <meta property="og:site_name" content="Hexo">
-<meta property="og:description" content="Welcome to Hexo! This is your very first post. Check documentation for more info. If you get any problems when using Hexo, you can find the answer in troubleshooting or you can ask me on GitHub. Quick">
+<meta property="og:description" content="版权声明：本文为博主原创文章，遵循 CC 4.0 BY-SA 版权协议，转载请附上原文出处链接和本声明。本文链接：https://blog.csdn.net/qq_36369941/article/details/88411464python3 实现爬取网站下所有URL 获取首页元素信息：首页的URL链接获取：遍历第一次返回的结果：递归循环遍历：全部代码如下：小结：python3.6request">
 <meta property="og:locale" content="en">
-<meta property="og:updated_time" content="2019-09-22T16:09:00.608Z">
+<meta property="og:updated_time" content="2019-09-24T02:13:17.554Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Hello World">
-<meta name="twitter:description" content="Welcome to Hexo! This is your very first post. Check documentation for more info. If you get any problems when using Hexo, you can find the answer in troubleshooting or you can ask me on GitHub. Quick">
+<meta name="twitter:title" content="python爬取网页所有链接">
+<meta name="twitter:description" content="版权声明：本文为博主原创文章，遵循 CC 4.0 BY-SA 版权协议，转载请附上原文出处链接和本声明。本文链接：https://blog.csdn.net/qq_36369941/article/details/88411464python3 实现爬取网站下所有URL 获取首页元素信息：首页的URL链接获取：遍历第一次返回的结果：递归循环遍历：全部代码如下：小结：python3.6request">
 
 
 
@@ -119,13 +119,13 @@
 
 
 
-  <link rel="canonical" href="http://yoursite.com/2019/09/23/hello-world/">
+  <link rel="canonical" href="http://yoursite.com/2019/09/24/python爬取网页所有链接/">
 
 
 
 
 
-  <title>Hello World | Hexo</title>
+  <title>python爬取网页所有链接 | Hexo</title>
   
 
 
@@ -232,7 +232,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/09/23/hello-world/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/09/24/python爬取网页所有链接/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="John Doe">
@@ -249,7 +249,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">Hello World</h1>
+          <h1 class="post-title" itemprop="name headline">python爬取网页所有链接</h1>
         
 
         <div class="post-meta">
@@ -261,8 +261,8 @@
               
                 <span class="post-meta-item-text">Posted on</span>
               
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-09-23T00:09:00+08:00">
-                2019-09-23
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-09-24T10:11:33+08:00">
+                2019-09-24
               </time>
             
 
@@ -299,19 +299,24 @@
       
 
       
-        <p>Welcome to <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a>! This is your very first post. Check <a href="https://hexo.io/docs/" target="_blank" rel="noopener">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a href="https://hexo.io/docs/troubleshooting.html" target="_blank" rel="noopener">troubleshooting</a> or you can ask me on <a href="https://github.com/hexojs/hexo/issues" target="_blank" rel="noopener">GitHub</a>.</p>
-<h2 id="Quick-Start"><a href="#Quick-Start" class="headerlink" title="Quick Start"></a>Quick Start</h2><h3 id="Create-a-new-post"><a href="#Create-a-new-post" class="headerlink" title="Create a new post"></a>Create a new post</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo new <span class="string">"My New Post"</span></span><br></pre></td></tr></table></figure>
-
-<p>More info: <a href="https://hexo.io/docs/writing.html" target="_blank" rel="noopener">Writing</a></p>
-<h3 id="Run-server"><a href="#Run-server" class="headerlink" title="Run server"></a>Run server</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo server</span><br></pre></td></tr></table></figure>
-
-<p>More info: <a href="https://hexo.io/docs/server.html" target="_blank" rel="noopener">Server</a></p>
-<h3 id="Generate-static-files"><a href="#Generate-static-files" class="headerlink" title="Generate static files"></a>Generate static files</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo generate</span><br></pre></td></tr></table></figure>
-
-<p>More info: <a href="https://hexo.io/docs/generating.html" target="_blank" rel="noopener">Generating</a></p>
-<h3 id="Deploy-to-remote-sites"><a href="#Deploy-to-remote-sites" class="headerlink" title="Deploy to remote sites"></a>Deploy to remote sites</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo deploy</span><br></pre></td></tr></table></figure>
-
-<p>More info: <a href="https://hexo.io/docs/deployment.html" target="_blank" rel="noopener">Deployment</a></p>
+        <p>版权声明：本文为博主原创文章，遵循 CC 4.0 BY-SA 版权协议，转载请附上原文出处链接和本声明。<br>本文链接：<a href="https://blog.csdn.net/qq_36369941/article/details/88411464" target="_blank" rel="noopener">https://blog.csdn.net/qq_36369941/article/details/88411464</a><br>python3 实现爬取网站下所有URL</p>
+<p>获取首页元素信息：<br>首页的URL链接获取：<br>遍历第一次返回的结果：<br>递归循环遍历：<br>全部代码如下：<br>小结：<br>python3.6<br>requests &amp;&amp; bs4<br>采用递归方法，最终爬取网站所有链接<br>获取首页元素信息：</p>
+<p>目标 test_URL：<a href="http://www.xxx.com.cn/" target="_blank" rel="noopener">http://www.xxx.com.cn/</a><br>首先检查元素，a 标签下是我们需要爬取得链接，通过获取链接路径，定位出我们需要的信息</p>
+<p>soup = Bs4(reaponse.text, “lxml”)<br>urls_li = soup.select(“#mainmenu_top &gt; div &gt; div &gt; ul &gt; li”)<br>1<br>2</p>
+<p>首页的URL链接获取：</p>
+<p>完成首页的URL链接获取，具体代码如下：</p>
+<p>def get_first_url():<br>    list_href = []<br>    reaponse = requests.get(“<a href="http://www.xxx.com.cn&quot;" target="_blank" rel="noopener">http://www.xxx.com.cn&quot;</a>, headers=headers)<br>    soup = Bs4(reaponse.text, “lxml”)<br>    urls_li = soup.select(“#mainmenu_top &gt; div &gt; div &gt; ul &gt; li”)<br>    for url_li in urls_li:<br>        urls = url_li.select(“a”)<br>        for url in urls:<br>            url_href = url.get(“href”)<br>            list_href.append(head_url+url_href)<br>            out_url = list(set(list_href))<br>    for reg in out_url:<br>        print(reg)<br>1<br>2<br>3<br>4<br>5<br>6<br>7<br>8<br>9<br>10<br>11<br>12<br>13<br>演示结果如下：</p>
+<p>遍历第一次返回的结果：</p>
+<p>从第二步获取URL的基础上，遍历请求每个页面，获取页面中的URL链接，过滤掉不需要的信息<br>具体代码如下：</p>
+<p>def get_next_url(urllist):<br>    url_list = []<br>    for url in urllist:<br>        response = requests.get(url,headers=headers)<br>        soup = Bs4(response.text,”lxml”)<br>        urls = soup.find_all(“a”)<br>        if urls:<br>            for url2 in urls:<br>                url2_1 = url2.get(“href”)<br>                if url2_1:<br>                    if url2_1[0] == “/“:<br>                        url2_1 = head_url + url2_1<br>                        url_list.append(url2_1)<br>                        if url2_1[0:24] == “<a href="http://www.xxx.com.cn&quot;" target="_blank" rel="noopener">http://www.xxx.com.cn&quot;</a>:<br>                            url2_1 = url2_1<br>                            url_list.append(url2_1)<br>                        else:<br>                            pass<br>                    else:<br>                        pass<br>                else:<br>                    pass<br>        else:<br>            pass<br>    url_list2 = set(url_list)<br>    for url_ in url_list2:<br>        res = requests.get(url_)<br>        if res.status_code ==200:<br>            print(url_)<br>    print(len(url_list2))<br>1<br>2<br>3<br>4<br>5<br>6<br>7<br>8<br>9<br>10<br>11<br>12<br>13<br>14<br>15<br>16<br>17<br>18<br>19<br>20<br>21<br>22<br>23<br>24<br>25<br>26<br>27<br>28<br>29<br>30<br>递归循环遍历：</p>
+<p>递归实现爬取所有url，在get_next_url()函数中调用自身，代码如下：</p>
+<p>get_next_url(url_list2)<br>1<br>全部代码如下：</p>
+<p>#!/usr/bin/env python </p>
+<h1 id="coding-utf-8"><a href="#coding-utf-8" class="headerlink" title="-- coding:utf-8 --"></a>-<em>- coding:utf-8 -</em>-</h1><p>import requests<br>from bs4 import BeautifulSoup as Bs4</p>
+<p>head_url = “<a href="http://www.xxx.com.cn&quot;" target="_blank" rel="noopener">http://www.xxx.com.cn&quot;</a><br>headers = {<br>    “User-Agent”: “Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/72.0.3626.121 Safari/537.36”<br>}<br>def get_first_url():<br>    list_href = []<br>    reaponse = requests.get(head_url, headers=headers)<br>    soup = Bs4(reaponse.text, “lxml”)<br>    urls_li = soup.select(“#mainmenu_top &gt; div &gt; div &gt; ul &gt; li”)<br>    for url_li in urls_li:<br>        urls = url_li.select(“a”)<br>        for url in urls:<br>            url_href = url.get(“href”)<br>            list_href.append(head_url+url_href)<br>            out_url = list(set(list_href))<br>    return out_url</p>
+<p>def get_next_url(urllist):<br>    url_list = []<br>    for url in urllist:<br>        response = requests.get(url,headers=headers)<br>        soup = Bs4(response.text,”lxml”)<br>        urls = soup.find_all(“a”)<br>        if urls:<br>            for url2 in urls:<br>                url2_1 = url2.get(“href”)<br>                if url2_1:<br>                    if url2_1[0] == “/“:<br>                        url2_1 = head_url + url2_1<br>                        url_list.append(url2_1)<br>                        if url2_1[0:24] == “<a href="http://www.xxx.com.cn&quot;" target="_blank" rel="noopener">http://www.xxx.com.cn&quot;</a>:<br>                            url2_1 = url2_1<br>                            url_list.append(url2_1)<br>                        else:<br>                            pass<br>                    else:<br>                        pass<br>                else:<br>                    pass<br>        else:<br>            pass<br>    url_list2 = set(url_list)<br>    for url_ in url_list2:<br>        res = requests.get(url_)<br>        if res.status_code ==200:<br>            print(url_)<br>    print(len(url_list2))<br>    get_next_url(url_list2)</p>
+<p>if <strong>name</strong> == “<strong>main</strong>“:<br>    urllist = get_first_url()<br>    get_next_url(urllist)<br>1<br>2<br>3<br>4<br>5<br>6<br>7<br>8<br>9<br>10<br>11<br>12<br>13<br>14<br>15<br>16<br>17<br>18<br>19<br>20<br>21<br>22<br>23<br>24<br>25<br>26<br>27<br>28<br>29<br>30<br>31<br>32<br>33<br>34<br>35<br>36<br>37<br>38<br>39<br>40<br>41<br>42<br>43<br>44<br>45<br>46<br>47<br>48<br>49<br>50<br>51<br>52<br>53<br>54<br>55<br>56<br>57<br>58<br>59<br>60<br>小结：</p>
+<p>刚开始学习写python脚本，有不足之处，多多指导，有一个小bug,后期会进一步完善。<br>————————————————<br>版权声明：本文为CSDN博主「淡淡的就好_」的原创文章，遵循 CC 4.0 BY-SA 版权协议，转载请附上原文出处链接及本声明。<br>原文链接：<a href="https://blog.csdn.net/qq_36369941/article/details/88411464" target="_blank" rel="noopener">https://blog.csdn.net/qq_36369941/article/details/88411464</a></p>
 
       
     </div>
@@ -336,14 +341,18 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
+              <a href="/2019/09/24/python中的request模块/" rel="next" title="python中的request模块">
+                <i class="fa fa-chevron-left"></i> python中的request模块
+              </a>
+            
           </div>
 
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
             
-              <a href="/2019/09/23/我的第一篇博客/" rel="prev" title="我的第一篇博客">
-                我的第一篇博客 <i class="fa fa-chevron-right"></i>
+              <a href="/2019/09/24/VGG-16模型/" rel="prev" title="VGG-16模型">
+                VGG-16模型 <i class="fa fa-chevron-right"></i>
               </a>
             
           </div>
@@ -458,7 +467,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Quick-Start"><span class="nav-number">1.</span> <span class="nav-text">Quick Start</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Create-a-new-post"><span class="nav-number">1.1.</span> <span class="nav-text">Create a new post</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Run-server"><span class="nav-number">1.2.</span> <span class="nav-text">Run server</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Generate-static-files"><span class="nav-number">1.3.</span> <span class="nav-text">Generate static files</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Deploy-to-remote-sites"><span class="nav-number">1.4.</span> <span class="nav-text">Deploy to remote sites</span></a></li></ol></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#coding-utf-8"><span class="nav-number">1.</span> <span class="nav-text">-- coding:utf-8 --</span></a></li></ol></div>
             
 
           </div>
