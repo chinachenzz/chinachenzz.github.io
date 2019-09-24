@@ -229,6 +229,149 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/09/24/python中的request模块/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="John Doe">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hexo">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2019/09/24/python中的request模块/" itemprop="url">python中的request模块</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-09-24T09:53:20+08:00">
+                2019-09-24
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p>本文转自：<a href="https://www.cnblogs.com/ydy11/p/8902631.html（版权归属原作者，因觉得写得非常好，故引用）" target="_blank" rel="noopener">https://www.cnblogs.com/ydy11/p/8902631.html（版权归属原作者，因觉得写得非常好，故引用）</a></p>
+<h2 id="python模块之request模块的理解"><a href="#python模块之request模块的理解" class="headerlink" title="python模块之request模块的理解"></a>python模块之request模块的理解</h2><p>​       request模块是一个用于访问网络的模块，</p>
+<p>1、不管写什么样的脚本我们都知道首先要导入我们所需要的模块</p>
+<p> <img src="https://images2018.cnblogs.com/blog/1254882/201804/1254882-20180421181412941-467796016.png" alt="img"></p>
+<p>2、既然这个模块是访问网络的模块我们就给他传递一个url，发送get请求。</p>
+<p>因为在做ctf题目，所以就已题目的url为例</p>
+<p><img src="https://images2018.cnblogs.com/blog/1254882/201804/1254882-20180422083000000-921523427.png" alt="img"></p>
+<p>发送后，我们会得到这个相应对象re，里面就是我们想要的相应信息。这里如果不做任何处理输出的话会返回请求的状态码，如果希望出现内容，需要添加.text。以字符串格式输出。同理post传递也是一样的。</p>
+<p>3、发送带参数的请求</p>
+<p>get请求：发送get请求时，他的参数是params为关键字传递的。我们来测试一下</p>
+<p><img src="https://images2018.cnblogs.com/blog/1254882/201804/1254882-20180422093907557-1207932257.png" alt="img"></p>
+<p>post请求：发送post请求时，以data为关键字参数来传递的，测试一下</p>
+<p><img src="https://images2018.cnblogs.com/blog/1254882/201804/1254882-20180422094222197-1220305938.png" alt="img"></p>
+<p>4、获取响应头中的某个字段</p>
+<p>这个我们可以利用headers，测试一下</p>
+<p>获取全部字段</p>
+<p><img src="https://images2018.cnblogs.com/blog/1254882/201804/1254882-20180422094619163-568126485.png" alt="img"></p>
+<p>获取指定的字段，例如这个题目，我要获取FLAG字段</p>
+<p><img src="https://images2018.cnblogs.com/blog/1254882/201804/1254882-20180422094716789-1220605561.png" alt="img"></p>
+<p>‘re.headers’获取的是一个字典，我们想要获取某一个，就可以通过这种形式获取。</p>
+<p>如果我们想要获得请求头，可以直接re.request.headers，测试一下</p>
+<p><img src="https://images2018.cnblogs.com/blog/1254882/201804/1254882-20180422100345717-182671591.png" alt="img"></p>
+<p>文章结尾，送上ctf题目的python脚本</p>
+<p><img src="1254882-20180422100709657-1367788707.png" alt="img"></p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/09/23/谷歌在NASA发表量子霸权文章/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -864,7 +1007,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">4</span>
+                  <span class="site-state-item-count">5</span>
                   <span class="site-state-item-name">posts</span>
                 </a>
               </div>
