@@ -229,6 +229,810 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/09/26/C-中实现进程同步的四种方式/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="John Doe">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hexo">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2019/09/26/C-中实现进程同步的四种方式/" itemprop="url">C++中实现进程同步的四种方式</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-09-26T12:11:44+08:00">
+                2019-09-26
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h3 id="为什么要进行线程同步？"><a href="#为什么要进行线程同步？" class="headerlink" title="为什么要进行线程同步？"></a>为什么要进行线程同步？</h3><p>在程序中使用多线程时，一般很少有多个线程能在其生命期内进行完全独立的操作。更多的情况是一些线程进行某些处理操作，而其他的线程必须对其处理结果进行了解。正常情况下对这种处理结果的了解应当在其处理任务完成后进行。<br>　　如果不采取适当的措施，其他线程往往会在线程处理任务结束前就去访问处理结果，这就很有可能得到有关处理结果的错误了解。例如，多个线程同时访问同一个全局变量，如果都是读取操作，则不会出现问题。如果一个线程负责改变此变量的值，而其他线程负责同时读取变量内容，则不能保证读取到的数据是经过写线程修改后的。<br>　　为了确保读线程读取到的是经过修改的变量，就必须在向变量写入数据时禁止其他线程对其的任何访问，直至赋值过程结束后再解除对其他线程的访问限制。这种保证线程能了解其他线程任务处理结束后的处理结果而采取的保护措施即为线程同步。</p>
+<p>代码示例：<br>两个线程同时对一个全局变量进行加操作，演示了多线程资源访问冲突的情况。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">`#include &quot;stdafx.h&quot;``#include&lt;windows.h&gt;``#include&lt;iostream&gt;``using` `namespace` `std;` `int` `number = 1;` `unsigned ``long` `__stdcall ThreadProc1(``void``* lp)``&#123;``    ``while` `(number &lt; 100)``    ``&#123;``        ``cout &lt;&lt; ``&quot;thread 1 :&quot;``&lt;&lt;number &lt;&lt; endl;``        ``++number;``        ``_sleep(100);``    ``&#125;` `    ``return` `0;``&#125;` `unsigned ``long` `__stdcall ThreadProc2(``void``* lp)``&#123;``    ``while` `(number &lt; 100)``    ``&#123;``        ``cout &lt;&lt; ``&quot;thread 2 :&quot;``&lt;&lt;number &lt;&lt; endl;``        ``++number;``        ``_sleep(100);``    ``&#125;` `    ``return` `0;``&#125;` `int` `main()``&#123;``    ``CreateThread(NULL, 0, ThreadProc1, NULL, 0, NULL);``    ``CreateThread(NULL, 0, ThreadProc2, NULL, 0, NULL);` `    ``Sleep(10*1000);` `    ``system``(``&quot;pause&quot;``);``    ``return` `0;``&#125;　　`</span><br></pre></td></tr></table></figure>
+
+<p>运行结果：<br><img src="https://img-blog.csdn.net/20170705222827993?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvc19saXNoZW5n/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast" alt="这里写图片描述"><br>可以看到有时两个线程计算的值相同，不是我们想要的结果。</p>
+<h2 id="关于线程同步"><a href="#关于线程同步" class="headerlink" title="关于线程同步"></a>关于线程同步</h2><p>线程之间通信的两个基本问题是互斥和同步。</p>
+<ul>
+<li><em>线程同步</em>是指线程之间所具有的一种制约关系，一个线程的执行依赖另一个线程的消息，当它没有得到另一个线程的消息时应等待，直到消息到达时才被唤醒。</li>
+<li><em>线程互斥</em>是指对于共享的操作系统资源（指的是广义的”资源”，而不是Windows的.res文件，譬如全局变量就是一种共享资源），在各线程访问时的排它性。当有若干个线程都要使用某一共享资源时，任何时刻最多只允许一个线程去使用，其它要使用该资源的线程必须等待，直到占用资源者释放该资源。</li>
+</ul>
+<p>线程互斥是一种特殊的线程同步。实际上，互斥和同步对应着线程间通信发生的两种情况：</p>
+<ul>
+<li>当有多个线程访问共享资源而不使资源被破坏时；</li>
+<li>当一个线程需要将某个任务已经完成的情况通知另外一个或多个线程时。</li>
+</ul>
+<p>从大的方面讲，线程的同步可分用户模式的线程同步和内核对象的线程同步两大类。</p>
+<ul>
+<li>用户模式中线程的同步方法主要有原子访问和临界区等方法。其特点是同步速度特别快，适合于对线程运行速度有严格要求的场合。</li>
+<li>内核对象的线程同步则主要由事件、等待定时器、信号量以及信号灯等内核对象构成。由于这种同步机制使用了内核对象，使用时必须将线程从用户模式切换到内核模式，而这种转换一般要耗费近千个CPU周期，因此同步速度较慢，但在适用性上却要远优于用户模式的线程同步方式。</li>
+</ul>
+<p>在WIN32中，同步机制主要有以下几种：<br>（1）事件(Event);<br>（2）信号量(semaphore);<br>（3）互斥量(mutex);<br>（4）临界区(Critical section)。</p>
+<h2 id="Win32中的四种同步方式"><a href="#Win32中的四种同步方式" class="headerlink" title="Win32中的四种同步方式"></a>Win32中的四种同步方式</h2><h3 id="临界区"><a href="#临界区" class="headerlink" title="临界区"></a>临界区</h3><p>临界区（Critical Section）是一段独占对某些共享资源访问的代码，在任意时刻只允许一个线程对共享资源进行访问。如果有多个线程试图同时访问临界区，那么在有一个线程进入后其他所有试图访问此临界区的线程将被挂起，并一直持续到进入临界区的线程离开。临界区在被释放后，其他线程可以继续抢占，并以此达到用原子方式操作共享资源的目的。</p>
+<p>临界区在使用时以CRITICAL_SECTION结构对象保护共享资源，并分别用EnterCriticalSection（）和LeaveCriticalSection（）函数去标识和释放一个临界区。所用到的CRITICAL_SECTION结构对象必须经过InitializeCriticalSection（）的初始化后才能使用，而且必须确保所有线程中的任何试图访问此共享资源的代码都处在此临界区的保护之下。否则临界区将不会起到应有的作用，共享资源依然有被破坏的可能。</p>
+<p>代码示例：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">`#include &quot;stdafx.h&quot;``#include&lt;windows.h&gt;``#include&lt;iostream&gt;``using` `namespace` `std;` `int` `number = 1; ``//定义全局变量``CRITICAL_SECTION Critical;      ``//定义临界区句柄` `unsigned ``long` `__stdcall ThreadProc1(``void``* lp)``&#123;``    ``while` `(number &lt; 100)``    ``&#123;``        ``EnterCriticalSection(&amp;Critical);``        ``cout &lt;&lt; ``&quot;thread 1 :&quot;``&lt;&lt;number &lt;&lt; endl;``        ``++number;``        ``_sleep(100);``        ``LeaveCriticalSection(&amp;Critical);``    ``&#125;` `    ``return` `0;``&#125;` `unsigned ``long` `__stdcall ThreadProc2(``void``* lp)``&#123;``    ``while` `(number &lt; 100)``    ``&#123;``        ``EnterCriticalSection(&amp;Critical);``        ``cout &lt;&lt; ``&quot;thread 2 :&quot;``&lt;&lt;number &lt;&lt; endl;``        ``++number;``        ``_sleep(100);``        ``LeaveCriticalSection(&amp;Critical);``    ``&#125;` `    ``return` `0;``&#125;` `int` `main()``&#123;``    ``InitializeCriticalSection(&amp;Critical);   ``//初始化临界区对象` `    ``CreateThread(NULL, 0, ThreadProc1, NULL, 0, NULL);``    ``CreateThread(NULL, 0, ThreadProc2, NULL, 0, NULL);` `    ``Sleep(10*1000);` `    ``system``(``&quot;pause&quot;``);``    ``return` `0;``&#125;`</span><br></pre></td></tr></table></figure>
+
+<p>运行结果：<br><img src="https://img-blog.csdn.net/20170705224826272?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvc19saXNoZW5n/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast" alt="这里写图片描述"><br>可以看到，也实现了有序输出，实现了线程同步。</p>
+<h3 id="事件"><a href="#事件" class="headerlink" title="事件"></a>事件</h3><p>事件(Event)是WIN32提供的最灵活的线程间同步方式，事件可以处于激发状态(signaled or true)或未激发状态(unsignal or false)。根据状态变迁方式的不同，事件可分为两类：<br>（1）手动设置：这种对象只可能用程序手动设置，在需要该事件或者事件发生时，采用SetEvent及ResetEvent来进行设置。<br>（2）自动恢复：一旦事件发生并被处理后，自动恢复到没有事件状态，不需要再次设置。</p>
+<p>使用”事件”机制应注意以下事项：<br>（1）如果跨进程访问事件，必须对事件命名，在对事件命名的时候，要注意不要与系统命名空间中的其它全局命名对象冲突；<br>（2）事件是否要自动恢复；<br>（3）事件的初始状态设置。</p>
+<p>由于event对象属于内核对象，故进程B可以调用OpenEvent函数通过对象的名字获得进程A中event对象的句柄，然后将这个句柄用于ResetEvent、SetEvent和WaitForMultipleObjects等函数中。此法可以实现一个进程的线程控制另一进程中线程的运行，例如：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">`HANDLE` `hEvent=OpenEvent(EVENT_ALL_ACCESS,``true``,``&quot;MyEvent&quot;``); ``ResetEvent(hEvent);`</span><br></pre></td></tr></table></figure>
+
+<p>代码示例：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">`#include &quot;stdafx.h&quot;``#include&lt;windows.h&gt;``#include&lt;iostream&gt;``using` `namespace` `std;` `int` `number = 1; ``//定义全局变量``HANDLE` `hEvent;  ``//定义事件句柄` `unsigned ``long` `__stdcall ThreadProc1(``void``* lp)``&#123;``    ``while` `(number &lt; 100)``    ``&#123;``        ``WaitForSingleObject(hEvent, INFINITE);  ``//等待对象为有信号状态``        ``cout &lt;&lt; ``&quot;thread 1 :&quot;``&lt;&lt;number &lt;&lt; endl;``        ``++number;``        ``_sleep(100);``        ``SetEvent(hEvent);``    ``&#125;` `    ``return` `0;``&#125;` `unsigned ``long` `__stdcall ThreadProc2(``void``* lp)``&#123;``    ``while` `(number &lt; 100)``    ``&#123;``        ``WaitForSingleObject(hEvent, INFINITE);  ``//等待对象为有信号状态``        ``cout &lt;&lt; ``&quot;thread 2 :&quot;``&lt;&lt;number &lt;&lt; endl;``        ``++number;``        ``_sleep(100);``        ``SetEvent(hEvent);``    ``&#125;` `    ``return` `0;``&#125;` `int` `main()``&#123;``    ``CreateThread(NULL, 0, ThreadProc1, NULL, 0, NULL);``    ``CreateThread(NULL, 0, ThreadProc2, NULL, 0, NULL);``    ``hEvent = CreateEvent(NULL, FALSE, TRUE, ``&quot;event&quot;``);` `    ``Sleep(10*1000);` `    ``system``(``&quot;pause&quot;``);``    ``return` `0;``&#125;`</span><br></pre></td></tr></table></figure>
+
+<p>运行结果：<br><img src="https://img-blog.csdn.net/20170705223744494?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvc19saXNoZW5n/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast" alt="这里写图片描述"><br>可以看到，实现了有序输出，实现了线程同步。</p>
+<h3 id="信号量"><a href="#信号量" class="headerlink" title="信号量"></a>信号量</h3><p>信号量是维护0到指定最大值之间的同步对象。信号量状态在其计数大于0时是有信号的，而其计数是0时是无信号的。信号量对象在控制上可以支持有限数量共享资源的访问。</p>
+<p>信号量的特点和用途可用下列几句话定义：<br>（1）如果当前资源的数量大于0，则信号量有效；<br>（2）如果当前资源数量是0，则信号量无效；<br>（3）系统决不允许当前资源的数量为负值；<br>（4）当前资源数量决不能大于最大资源数量。</p>
+<h4 id="创建信号量"><a href="#创建信号量" class="headerlink" title="创建信号量"></a>创建信号量</h4><p>函数原型为：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">`HANDLE` `CreateSemaphore (``  ``　PSECURITY_ATTRIBUTE psa, ``//信号量的安全属性``　  ``LONG` `lInitialCount, ``//开始时可供使用的资源数``　  ``LONG` `lMaximumCount, ``//最大资源数``   ``PCTSTR` `pszName);     ``//信号量的名称`</span><br></pre></td></tr></table></figure>
+
+<p>　　</p>
+<h4 id="释放信号量"><a href="#释放信号量" class="headerlink" title="释放信号量"></a>释放信号量</h4><p>通过调用ReleaseSemaphore函数，线程就能够对信标的当前资源数量进行递增，该函数原型为：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">`BOOL` `WINAPI ReleaseSemaphore(``  ``　``HANDLE` `hSemaphore,   ``//要增加的信号量句柄``  ``　``LONG` `lReleaseCount, ``//信号量的当前资源数增加lReleaseCount``  ``　``LPLONG` `lpPreviousCount  ``//增加前的数值返回``   ``);`</span><br></pre></td></tr></table></figure>
+
+<h4 id="打开信号量"><a href="#打开信号量" class="headerlink" title="打开信号量　"></a>打开信号量　</h4><p>和其他核心对象一样，信号量也可以通过名字跨进程访问，打开信号量的API为：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">`HANDLE` `OpenSemaphore (``  ``　``DWORD` `fdwAccess,      ``//access``  ``　``BOOL` `bInherithandle,  ``//如果允许子进程继承句柄，则设为TRUE``  ``　``PCTSTR` `pszName  ``//指定要打开的对象的名字``  ``);`</span><br></pre></td></tr></table></figure>
+
+<p>代码示例：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">`#include &quot;stdafx.h&quot;``#include&lt;windows.h&gt;``#include&lt;iostream&gt;``using` `namespace` `std;` `int` `number = 1; ``//定义全局变量``HANDLE` `hSemaphore;  ``//定义信号量句柄` `unsigned ``long` `__stdcall ThreadProc1(``void``* lp)``&#123;``    ``long` `count;``    ``while` `(number &lt; 100)``    ``&#123;``        ``WaitForSingleObject(hSemaphore, INFINITE);  ``//等待信号量为有信号状态``        ``cout &lt;&lt; ``&quot;thread 1 :&quot;``&lt;&lt;number &lt;&lt; endl;``        ``++number;``        ``_sleep(100);``        ``ReleaseSemaphore(hSemaphore, 1, &amp;count);``    ``&#125;` `    ``return` `0;``&#125;` `unsigned ``long` `__stdcall ThreadProc2(``void``* lp)``&#123;``    ``long` `count;``    ``while` `(number &lt; 100)``    ``&#123;``        ``WaitForSingleObject(hSemaphore, INFINITE);  ``//等待信号量为有信号状态``        ``cout &lt;&lt; ``&quot;thread 2 :&quot;``&lt;&lt;number &lt;&lt; endl;``        ``++number;``        ``_sleep(100);``        ``ReleaseSemaphore(hSemaphore, 1, &amp;count);``    ``&#125;` `    ``return` `0;``&#125;` `int` `main()``&#123;``    ``hSemaphore = CreateSemaphore(NULL, 1, 100, ``&quot;sema&quot;``);` `    ``CreateThread(NULL, 0, ThreadProc1, NULL, 0, NULL);``    ``CreateThread(NULL, 0, ThreadProc2, NULL, 0, NULL);` `    ``Sleep(10*1000);` `    ``system``(``&quot;pause&quot;``);``    ``return` `0;``&#125;`</span><br></pre></td></tr></table></figure>
+
+<p>　　</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>运行结果：<br><img src="https://img-blog.csdn.net/20170705230611602?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvc19saXNoZW5n/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast" alt="这里写图片描述"><br>可以看到，实现了有序输出，实现了线程间同步。</p>
+<h3 id="互斥量"><a href="#互斥量" class="headerlink" title="互斥量"></a>互斥量</h3><p>采用互斥对象机制。 只有拥有互斥对象的线程才有访问公共资源的权限，因为互斥对象只有一个，所以能保证公共资源不会同时被多个线程访问。互斥不仅能实现同一应用程序的公共资源安全共享，还能实现不同应用程序的公共资源安全共享。</p>
+<p>代码示例：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">`#include &quot;stdafx.h&quot;``#include&lt;windows.h&gt;``#include&lt;iostream&gt;``using` `namespace` `std;` `int` `number = 1; ``//定义全局变量``HANDLE` `hMutex;  ``//定义互斥对象句柄` `unsigned ``long` `__stdcall ThreadProc1(``void``* lp)``&#123;``    ``while` `(number &lt; 100)``    ``&#123;``        ``WaitForSingleObject(hMutex, INFINITE);``        ``cout &lt;&lt; ``&quot;thread 1 :&quot;``&lt;&lt;number &lt;&lt; endl;``        ``++number;``        ``_sleep(100);``        ``ReleaseMutex(hMutex);``    ``&#125;` `    ``return` `0;``&#125;` `unsigned ``long` `__stdcall ThreadProc2(``void``* lp)``&#123;``    ``while` `(number &lt; 100)``    ``&#123;``        ``WaitForSingleObject(hMutex, INFINITE);``        ``cout &lt;&lt; ``&quot;thread 2 :&quot;``&lt;&lt;number &lt;&lt; endl;``        ``++number;``        ``_sleep(100);``        ``ReleaseMutex(hMutex);``    ``&#125;` `    ``return` `0;``&#125;` `int` `main()``&#123;``    ``hMutex = CreateMutex(NULL, ``false``, ``&quot;mutex&quot;``);     ``//创建互斥对象` `    ``CreateThread(NULL, 0, ThreadProc1, NULL, 0, NULL);``    ``CreateThread(NULL, 0, ThreadProc2, NULL, 0, NULL);` `    ``Sleep(10*1000);` `    ``system``(``&quot;pause&quot;``);``    ``return` `0;``&#125;`</span><br></pre></td></tr></table></figure>
+
+<p>运行结果：<br><img src="https://img-blog.csdn.net/20170705225654422?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvc19saXNoZW5n/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast" alt="这里写图片描述"><br>可以看到，实现了有序输出，实现了线程同步。</p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/09/26/八大排序算法/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="John Doe">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hexo">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2019/09/26/八大排序算法/" itemprop="url">八大排序算法</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-09-26T12:07:39+08:00">
+                2019-09-26
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p>八大排序：冒泡排序，选择排序法，直接插入法，shell 排序法，快速排序，堆<br>排，归并排序，基数排序<br>冒泡排序<br>每次比较相邻的两个数，如果第一个比第二个大，就交换，一直比较到最后完<br>成一趟冒泡，每次冒泡最后的数变的有序，如果无序会进行 n-1 次的排序，直<br>到所有数都变得有序</p>
+<p>时间复杂度：O（n*2） 优化后 O（n） 空间复杂度：O(1) 稳定性：稳定<br>void bublesort(int *arr, int len)<br>{<br>int tmp = 0;<br>for(int i=0;i&lt;len-1;i++)<br>{<br>bool swap =false;<br>for (int j = 0; j &lt; len- 1-i; j++)<br>{<br>if (arr[j] &gt; arr[j+1])<br>{<br>tmp = arr[j];<br>arr[j] = arr[j + 1];<br>arr[j + 1] = tmp;<br>swap = true;<br>}<br>}<br>if (!swap)<br>{<br>return;<br>}<br>}<br>}<br>选择排序法<br>选择法排序指每次选择所要排序的数组中的最大值（由小到大排序则选择最小值）<br>的数组元素，将这个数组元素的值与最前面没有进行排序的数组元素的值互换</p>
+<p>时间复杂度：O(N*2) 空间复杂度：O(1) 稳定性：不稳定<br>void selectsort(int *arr,int len)<br>{<br>int tmp;<br>int i ;<br>int j ;<br>int min=0;<br>for ( i = 0; i &lt; len - 1; i++)<br>{<br>min = i;<br>for ( j = i+ 1; j &lt; len; j++)<br>{<br>if (arr[j] &lt; arr[min])<br>{<br>tmp = arr[j];<br>arr[j] = arr[min];<br>arr[min] = tmp;<br>}<br>}<br>}<br>}<br>直接插入法<br>插入排序是在一个已经有序的小序列的基础上，一次插入一个元素。比较是从有<br>序序列的末尾开始，也就是想要插入的元素和已经有序的最大者开始比起，如果<br>比它大则直接插入在其后面，否则一直往前找直到找到它该插入的位置。如果碰<br>见一个和插入元素相等的，那么插入元素把想插入的元素放在相等元素的后面。<br>所以，相等元素的前后顺序没有改变，从原无序序列出去的顺序就是排好序后的<br>顺序，所以插入排序是稳定的。</p>
+<p>时间复杂度：O(n^2) 好的情况下 O(1) 空间复杂度：O（1） 稳定性：稳定<br>void insertsort(int *arr,int len)<br>{<br>int i,j,tmp;<br>for ( i = 1; i &lt; len; i++)<br>{<br>tmp = arr[i];<br>for (j = i - 1; i &gt;= 0;j–)<br>{<br>if (tmp &lt; arr[j])<br>{<br>arr[j + 1] = arr[j];<br>}<br>else<br>break;<br>}<br>arr[j + 1] = tmp;<br>}<br>}<br>shell  排序<br>Shell排序是直接插入排序的一种优化采用分组的思想，将一组数分成 n 各小组，<br>对每个小组进行插入排序，然后减小 n 值，重新分组，直到 n=1，最后 n 必须等<br>于1进行插入排序完成最终排序</p>
+<p>时间复杂度：O（n^1.3~~n^1.5） 空间复杂度 O(1) 稳定性：不稳定<br>void Shell(int *arr, int len, int gap)<br>{<br>int tmp = 0;<br>int i, j;<br>for (i = gap; i &lt; len; i++)<br>{<br>tmp = arr[i];<br>for (j = i - gap; j &gt;= 0; j-=gap)<br>{<br>if (arr[j] &gt; tmp)<br>{<br>arr[j + gap] = arr[j];<br>}<br>else<br>break;<br>}<br>arr[j + gap] = tmp;<br>}<br>}<br>void shellsort(int *arr,int len)<br>{<br>int drr[] ={ 5,3,1 };<br>int lend = sizeof(drr) / sizeof(drr[0]);<br>for (int i = 0; i &lt; lend; i++)<br>{<br>Shell(arr, len, drr[i]);<br>}<br>}<br>快速排序<br>时间复杂度：好的情况O（nlog2n）坏的情况(有序)O(n^2)<br>空间复杂度：O(logn) 稳定性：不稳定<br>1、先从数列中取出一个数作为基准数<br>2、分区过程，将比这个数大的数全放到它的右边，小于或等于它的数全放到它<br>的左边<br>3、再对左右区间重复第二步，直到各区间只有一个数<br>以第一个数为基准将其放进 TMP 中从 high 开始比较如果 high&lt;tmp 则把 high 放<br>入 low，然后 low++，若 arr[low]&gt;tmp,则把 low 放入high，然后 high–,若<br>high&lt;tmp,则把high给low,然后Low++，进行循环</p>
+<p>int Partation(int<em>arr,int low, int hign)<br>{<br>int tmp;<br>tmp = arr[low];<br>while (low &lt; hign)<br>{<br>while ((low&lt; hign) &amp;&amp; arr[hign] &gt;=tmp)<br>{<br>hign–;<br>}<br>if (low &gt;= hign)<br>{<br>break;<br>}<br>else<br>{<br>arr[low] = arr[hign];<br>}<br>while ((low&lt; hign) &amp;&amp; arr[low] &lt;= tmp)<br>{<br>low++;<br>}<br>if (low &gt;= hign)<br>{<br>break;<br>}<br>else<br>{<br>arr[hign] =arr[low];<br>}<br>}<br>arr[low] = tmp;<br>return low;<br>//查找 par 的位置，找到后刚好完成第一次快排<br>}<br>一，//递归<br>void quick(int <em>arr, int low, int hign)<br>{<br>int par = Partation(arr, low, hign);<br>if(par&gt;low+1)<br>{<br>quick(arr, low, par - 1);<br>}<br>//从第一次快速排列后的左边开始重新定义新的hign为par-1,并对左边进行快速排列，查找新的par<br>值<br>if (par &lt; hign - 1)<br>{<br>quick(arr, par + 1, hign);<br>}<br>//从第一次快速排列后的右边开始重新查找新的 low 为 0,并对右边进行快速排列，查找新的 par<br>}<br>void quicksort(int *arr,int len)<br>{<br>quick(arr, 0, len - 1);<br>//整个数列从头到尾查找 par 进行第一次快速排列<br>}<br>二//非递归 进行入栈操作进行排列<br>#include&lt;math.h&gt;<br>void quicksort1(int</em>arr, int len)<br>{<br>int tmpsize= (int)ceil(log((double)len));<br>int *stack = (int</em>)malloc(sizeof(int)<em>tmpsize</em>2);<br>//开辟栈的内存大小( O（nlog2n） )<br>assert(stack != NULL);<br>int low = 0;<br>int hign = len - 1;<br>int par = Partation(arr, 0, len - 1);<br>//第一次排序后为 9,5,13,2,6,20,32,25,76，查找第一个 par</p>
+<p>int top = 0;<br>if (par &gt; low + 1)<br>{<br>stack[top++] = low;<br>stack[top++] = par - 1;<br>}<br>//对 par 的左边进行入栈操作，入栈 0,4<br>if (par &lt; hign-1)<br>{<br>stack[top++] = par + 1;<br>stack[top++] = hign;<br>}</p>
+<p>//对 par 的右边进行入栈操作，入栈 6,8<br>while (top &gt; 0)<br>{<br>hign = stack[–top];<br>low = stack[–top];<br>par = Partation(arr, low, hign);<br>//（1.a）赋予 hign,low,par 新的位置，hign 位置为 8，low 位置为 6，par 位置为 7，先进行右侧<br>的排序</p>
+<p>if (par &gt; low + 1)<br>{<br>stack[top++] = low;<br>stack[top++] = par - 1;<br>}<br>//（2），执行完（1）操作后，栈内所含数据为 0,4 对初始 par 的左边操作赋予 hign，low，par 新的<br>位置，此时 hign 位置为 4，low 位置为 0，par 位置为 3</p>
+<p>//此时 par 的右侧有序不需执行下面的的操作，接下来再次执行 par 左侧的入栈操作，新栈<br>进栈数据 0,2</p>
+<p>//再次重新 赋予 hign,low,par 新的位置，hign 位置为 2，low 位置为 0，par 位置为 1，此时数据排<br>序完成</p>
+<p>if (par &lt; hign - 1)<br>{<br>stack[top++] = par + 1;<br>stack[top++] = hign;<br>}<br>//（1.b）对新 par 的右边进行入栈操作，此时（1.a）操作后右侧数据有序<br>}<br>}<br>快速排序的三种方法：<br>（1 ） 随机选取基准法<br>思想：取待排序列中任意一个元素作为基准<br>void Swap(int *arr, intlow, int hign)<br>{<br>int tmp = arr[low];<br>arr[low] = arr[hign];<br>arr[hign] =tmp;<br>}<br>//交换 low，hign 所在位置的值<br>void quick2(int *arr, int low, int hign)<br>{<br>Swap(arr, low, rand() %(hign - low) + low);<br>int par = Partation(arr, low, hign);<br>//交换 low 与随机产生 hign 的值,确定新的 hign，low，par 位置<br>if (par&gt;low+ 1)<br>{<br>quick2(arr,low, par - 1);<br>}<br>//对 par 左边进行排序<br>if (par &lt; hign - 1)<br>{<br>quick2(arr,par + 1, hign);<br>}<br>//对 par 右边进行排序<br>}<br>void quicksort2(int *arr, int len)<br>{<br>quick(arr, 0, len - 1);<br>}<br>（2 ） 三数取中法<br>void Median_of_three(int *arr, int low, int mid, int hign)<br>{<br>//取三个数的中间值 arr[mid]&lt;=arr[low]&lt;=arr[hign]<br>if (arr[mid] &gt; arr[low])<br>{<br>Swap(arr, mid,low);<br>}<br>if (arr[mid] &gt; arr[hign])<br>{<br>Swap(arr, mid, hign);<br>}<br>if (arr[low] &gt; arr[hign])<br>{<br>Swap(arr, low, hign);<br>}<br>void quick3(int *arr, int low, int hign)<br>{<br>Median_of_three(arr, low, (hign - low) / 2, hign);<br>//取待排列的序列中的 low，mid，hign 值，选取中间值为驱轴</p>
+<p>int par = Partation(arr, low, hign);<br>if (par &lt; hign - 1)<br>{<br>quick3(arr,par + 1, hign);<br>}</p>
+<p>if (par&gt;low+ 1)<br>{<br>quick3(arr,low, par - 1);<br>}</p>
+<p>}<br>void quicksort3(int <em>arr, int len)<br>{<br>quick3(arr,0, len - 1);<br>}<br>（3 ） 基准聚拢法<br>待排序序列1467667686三数取中选取枢轴：下标为4的数6<br>转换后，待分割序列：6 467167686<br>枢轴key：6<br>第一步，在划分过程中，把与key相等元素放入数组的两端<br>结果为：6416(枢轴)787666<br>此时，与6相等的元素全放入在两端了<br>第二步，划分结束后，把与key相等的元素移到枢轴周围<br>结果为：1466(枢轴) 666787<br>此时，与6相等的元素全移到枢轴周围了<br>之后，在14和 787两个子序列进行快排<br>void Focus_Num(int *arr, int low, int par,int hign,int</em>left,int*right)<br>{<br>int i;<br>int Pleft =par - 1;<br>//聚拢左边相同数<br>for (i = par - 1; i &gt;= low; i–)<br>{<br>if (arr[i] == arr[par])<br>{<br>if (i == Pleft)<br>{<br>Pleft–;<br>}<br>//在 arr[i]==arr[par]的前提下，如果 i=Pleft,Pleft 向左移动，再次查找与 par 代表值相同的数<br>if (i != Pleft)<br>{<br>Swap(arr, i, Pleft);<br>Pleft–;<br>}<br>//在 arr[i]==arr[par]的前提下，如果 i！=Pleft,先交换 i 与 Pleft 所代表的值，再使 Pleft 向左<br>移动，再次查找与 par 代表值相同的数<br>}<br>}<br>int Pright = par + 1;<br>//聚拢右边相同数<br>for (i = par + 1; i &lt;= hign; i++)<br>{<br>if (arr[i] == arr[par])<br>{<br>if (i == Pright)<br>{<br>Pright++;<br>}<br>//在 arr[i]==arr[par]的前提下，如果 i=Pright,Pright 向右移动，再次查找与 par 代表值相同的<br>数<br>if (i != Pright)<br>{<br>Swap(arr, i, Pright);<br>Pright++;<br>}<br>//在 arr[i]==arr[par]的前提下，如果 i！=Pright,先交换 i 与 Pright 所代表的值，再使 Pright 向<br>右移动，再次查找与 par 代表值相同的数<br>}<br>}<br>*left = Pleft;<br>*right = Pright;<br>}<br>void quick4(int *arr, int low, int hign)<br>{<br>int par = Partation(arr, low, hign);<br>int left=par-1;<br>int right=par+1;<br>Focus_Num(arr, low, par, hign,&amp;left,&amp;right);<br>if (par&gt;low+ 1)<br>{<br>quick4(arr,low,left);<br>}<br>if (par &lt; hign - 1)<br>{<br>quick4(arr,right, hign);<br>}<br>}<br>void quicksort4(int *arr, int len)<br>{<br>quick4(arr,0, len - 1);<br>}<br>堆排<br>时间复杂度：O（nlog2n）最好最坏情况<br>空间复杂度:O（1) 稳定性：不稳定<br>堆排序是一种树形选择排序，在排序过程中可以把元素看成是一颗完全二叉树，<br>每个节点都大（小）于它的两个子节点，当每个节点都大于等于它的两个子节点<br>时，就称为大顶堆，也叫堆有序； 当每个节点都小于等于它的两个子节点时，<br>就称为小根堆。<br>思路（大根堆）：<br>（1）将长度为n的待排序的数组进行堆有序化构成一个大顶堆；<br>（2）将根节点与尾节点交换并输出此时的尾节点；<br>（3）将剩余的n-1个节点重新进行堆有序化；<br>（4）重复进行（2）（3）步骤直至构成一个有序序列</p>
+<p>void adjust(int<em>arr, int start, intend)<br>{<br>//将原数列调整为大根堆<br>int tmp;<br>tmp = arr[start];<br>//由子代（n）推出父代 ——————&gt; （n-1）/2<br>//由父代（n）推出子代 ——————&gt; 左子叶（2n+2）右子叶(2n+2)<br>for (int i = 2 * start + 1; i &lt;= end; i = 2 * i+ 1)<br>{<br>//i 为最后一个子叶的父代所在的位置<br>if (i &lt; end&amp;&amp; arr[i] &lt;arr[i + 1])<br>{<br>i++;//i 当前的下标肯定是左右孩子里最大的值<br>}<br>if (arr[i] &gt; tmp)<br>{<br>arr[start] = arr[i];<br>start = i;<br>}<br>else<br>{<br>break;<br>}<br>}<br>arr[start] = tmp;<br>//将 start 所代表的值赋值给 tmp,并将其与子代值进行比较，值小的置于 start 值所在的位置，再<br>进行下一个 start 操作，逐步将较大的值置于底部<br>}<br>void heapsort(int</em>arr, int len)<br>{<br>for (int i = (len - 1 -1) / 2; i &gt;= 0; i–)<br>{<br>adjust(arr,i, len - 1);<br>}<br>//第一次构造成大根堆</p>
+<p>int tmp = 0;<br>for (int i = 0; i &lt; len- 1; i++)<br>{<br>tmp = arr[0];<br>arr[0] = arr[len - 1 - i];<br>arr[len - 1- i] = tmp;<br>//根与最后的子叶交换，此时最大值位置确定<br>adjust(arr,0, len-1-i-1);<br>//再次将剩余数据构造大顶推树并进行根与最后子叶的交换，每交换一次确定出剩余数据最大值的位<br>置<br>}<br>}</p>
+<p>归并排序<br>时间复杂度：O(nlog2n) 空间复杂度：O(n) 稳定性：稳定<br>即先使每个子序列有序，再使子序列段间有序。若将两个有序表合并成一个有序<br>表，称为二路归并。<br>对以下数据5 10 8 14 19 1 35 25，单个数据有序，再进行排序使两个<br>两个数据有序，如下图示：</p>
+<p>void Merge(int<em>arr, intlen, int gap)<br>{<br>//申请一个数组<br>int *brr = (int</em>)malloc(sizeof(int)*len);<br>assert(brr != NULL);<br>//判断 start1，end1，start2，end2 的位置<br>int i = 0;<br>int s1 = 0;<br>int e1 = s1+gap - 1;;<br>int s2 = e1+ 1;<br>int e2 = s2+gap-1&lt;len-1?s2+gap-1:len-1;<br>//当有两个归并段时<br>while (s2 &lt;len)<br>{<br>//两个归并段都有数据<br>while ((s1 &lt;= e1) &amp;&amp; (s2 &lt;= e2))<br>{<br>if (arr[s1]&lt;= arr[s2])<br>{<br>brr[i++] = arr[s1++];<br>}<br>else<br>{<br>brr[i++] = arr[s2++];<br>}<br>}</p>
+<p>//退出循环的两种方式<br>while (s1 &lt;= e1)<br>{<br>brr[i++]=arr[s1++];<br>}<br>while (s2 &lt;= e2)<br>{<br>brr[i++] = arr[s2++];<br>}<br>s1 = e2 + 1;<br>e1 = s1 + gap - 1;;<br>s2 = e1 + 1;<br>e2 = s2 + gap - 1&lt;len - 1 ? s2 + gap - 1 : len- 1;<br>}<br>//只有一个归并段时<br>while (s1 &lt;len)<br>{<br>brr[i++] = arr[s1++];<br>}<br>for (int i = 0; i &lt; len; i++)<br>{<br>arr[i]=brr[i];<br>}<br>free(brr);<br>brr = NULL;<br>}<br>void Mergesort(int <em>arr, int len)<br>{<br>for (int i = 1; i &lt; len; i</em>=2)<br>{<br>Merge(arr, len, i);<br>}<br>}<br>基数排序<br>又称桶子法，根据当前待排序的每一位上的数字进行入桶排序，桶的数量跟当前<br>单个数字的取值范围有关等到最低位排完得到一个子序列，再将这个序列按照次<br>低位的大小进入相应的桶中，一直排到最高位为止，数组排序完成。</p>
+<p>//每个桶内存储数据时相当于进行单链表的操作，创建单链表<br>typedef struct Node<br>{<br>int data;<br>struct Node<em>next;<br>}Node, *List;<br>//单链表的初始化<br>void InitList(List plist)<br>{<br>assert(plist != NULL);<br>plist-&gt;next= NULL;<br>}<br>//新建一个节点<br>static Node</em>GetNode(int val)<br>{<br>Node *pGet = (Node *)malloc(sizeof(Node));<br>assert(pGet!= NULL);<br>pGet-&gt;data = val;<br>pGet-&gt;next = NULL;<br>return pGet;<br>}<br>//单链表的插入操作，尾插。入桶<br>bool Insert(List plist,int val)<br>{<br>Node *p = plist;<br>while (p-&gt;next != NULL)<br>{<br>p = p-&gt;next;<br>}<br>Node *pGet = GetNode(val);<br>p-&gt;next = pGet;<br>return true;<br>}<br>//删除并保存值，出桶操作<br>bool DelFirst(List plist, int *rtv)<br>{<br>Node *p = plist-&gt;next;<br>if (p == NULL)<br>{<br>return false;<br>}<br>*rtv = p-&gt;data;<br>plist-&gt;next= p-&gt;next;<br>free(p);<br>p = NULL;<br>return true;<br>}<br>//找出最大数并确定最大数的位数<br>int GetBitMax(int *arr,int len)<br>{<br>int max = arr[0];<br>int count =0;<br>for (int i = 1; i &lt; len;i++)<br>{<br>if (arr[i] &gt; max)<br>{<br>max = arr[i];<br>}<br>}<br>while (max != 0)<br>{<br>count++;<br>max /= 10;<br>}<br>return count;<br>}<br>//得到 figure 位上的数值<br>int Getnum(int num, intfigure)<br>{<br>for (int j = 0; j &lt; figure; j++)<br>{<br>num = num /10;<br>}<br>return num % 10;<br>}<br>void Base(int *arr, intlen, int figure)<br>{<br>assert(arr != NULL);<br>//创建桶<br>Node head[10];<br>for (int j = 0; j &lt; 10;j++)<br>{<br>InitList(&amp;head[j]);//初始化<br>}<br>int tmp;<br>for (int j = 0; j &lt; len; j++)<br>{<br>tmp = Getnum(arr[j], figure);//得到 j 号下表 figure 位的数值<br>Insert(&amp;head[tmp], arr[j]);<br>//入桶，遍历数组 figure 位相应的数据进入相应的桶里<br>}<br>int n = 0;<br>for (int j = 0; j &lt; 10;)<br>{<br>if (DelFirst(&amp;head[j], &amp;arr[n]))<br>{</p>
+<p>n++;//j 号桶不一定只有一个数据，遍历整个数组用 n 代表一个桶里存放数据的下表，<br>避免出现多个数据使数据存放出现问题，覆盖掉原先值或赋值后不改变<br>}<br>else<br>{<br>j++;//下一个桶<br>}<br>}<br>}<br>void Basesort(int *arr,int len)<br>{<br>int count =GetBitMax(arr, len);<br>for (int i = 0; i &lt; count; i++)<br>{<br>Base(arr, len, i);//i 表示当前数字从右往左数的位数<br>}<br>}<br>————————————————<br>版权声明：本文为CSDN博主「一步两步先生」的原创文章，遵循 CC 4.0 BY-SA 版权协议，转载请附上原文出处链接及本声明。<br>原文链接：<a href="https://blog.csdn.net/weixin_42323413/article/details/83001018" target="_blank" rel="noopener">https://blog.csdn.net/weixin_42323413/article/details/83001018</a></p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/09/26/C-面试题基础/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="John Doe">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hexo">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2019/09/26/C-面试题基础/" itemprop="url">C++面试题基础</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-09-26T11:50:49+08:00">
+                2019-09-26
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h3 id="C语言编译过程为：预处理–-gt-编译–-gt-汇编–-gt-链接"><a href="#C语言编译过程为：预处理–-gt-编译–-gt-汇编–-gt-链接" class="headerlink" title="C语言编译过程为：预处理–&gt;编译–&gt;汇编–&gt;链接"></a>C语言编译过程为：预处理–&gt;编译–&gt;汇编–&gt;链接</h3><p>1、预处理（Pre-processing）</p>
+<pre><code>对源程序中的伪指令（以#开头的指令）和特殊符号进行处理。伪指令包括：宏定义指令、条件编译指令、头文件包含指令。</code></pre><p>2、编译（Compiling）</p>
+<pre><code>将源程序转换为计算机可以执行的二进制代码。
+
+说明：在linux下，目录文件的缺省后缀为 .o
+
+ 编译程序将通过词法分析和语法分析，将其翻译为等价的汇编代码。在使用gcc编译时，缺省情况下不输出此汇编代码文件，       如果需要可在编译时指定 -s 选项，这样就会输出同名的汇编文件。</code></pre><p>3、汇编（Assembling）</p>
+<pre><code>将汇编语言代码翻译为机器语言的过程，产生一个名为 .o 的目标文件。</code></pre><p>4、链接（Linking）</p>
+<pre><code>目标代码不能直接执行，要将目标代码变为可执行程序，还需要进行链接操作，这样才会生产真正可执行的程序。
+
+链接操作最重要的步骤就是将函数库中的相应代码组合到目标文件中。</code></pre><p>原文链接：<a href="https://blog.csdn.net/M_joy666/article/details/79776856" target="_blank" rel="noopener">https://blog.csdn.net/M_joy666/article/details/79776856</a></p>
+<h2 id="经典C语言面试题1：malloc-和-new的区别？"><a href="#经典C语言面试题1：malloc-和-new的区别？" class="headerlink" title="经典C语言面试题1：malloc 和 new的区别？"></a>经典C语言面试题1：malloc 和 new的区别？</h2><p>①、malloc/ free是 C++/C语言的标准库函数，而new/ delete是C++的运算符。</p>
+<p>②、malloc内存分配成功返回的类型为void<em>，需要通过强制类型转换将void</em>转换为我们需要的类型。</p>
+<p>③、new内存分配失败时会抛出bac_alloc异常，不会返回NULL；而malloc分配失败时则返回NULL。</p>
+<p>④、使用new操作符申请内存分配是无需指定内存块的大小，而malloc则需要显式地指出所需的内存大小。<br>原文链接：<a href="https://blog.csdn.net/M_joy666/article/details/79777012" target="_blank" rel="noopener">https://blog.csdn.net/M_joy666/article/details/79777012</a></p>
+<h2 id="经典C语言面试题2：static关键字的用法"><a href="#经典C语言面试题2：static关键字的用法" class="headerlink" title="经典C语言面试题2：static关键字的用法"></a>经典C语言面试题2：static关键字的用法</h2><p>C语言中static关键字的用法主要有以下三种：</p>
+<p>1、在函数体内，static变量的作用范围为该函数体，该变量的内存只能被分配一次，下次调用时维持上次的值（即具有记忆功能）。</p>
+<p>2、在模块内的static全局变量可以被模块内的所有函数访问，但是不能被模块外的函数访问（注：即使在模块外的函数中加extern也不行）。</p>
+<p>3、在模块内的static函数只可以被模块内其他函数调用，此函数的作用域被限制在声明它的模块之中。</p>
+<p>综上：在全局变量前加上static则限制了其作用域（存储区均在全局区）；在局部变量前加static改变了其存储区（由栈上变为全局区）。<br>原文链接：<a href="https://blog.csdn.net/M_joy666/article/details/79779205" target="_blank" rel="noopener">https://blog.csdn.net/M_joy666/article/details/79779205</a></p>
+<h2 id="经典C语言面试题3：位域"><a href="#经典C语言面试题3：位域" class="headerlink" title="经典C语言面试题3：位域"></a>经典C语言面试题3：位域</h2><p>1、为什么要用位域？</p>
+<pre><code> 在计算机中，有些信息存储时并不需要占用一个完整的字节，而只需占用一个或几个二进制位。比如在存放一个只有0和1两种状态的开关量时，用一位二进制位即可表示。因此，为了节省存储空间，C语言提供了一种称为“位域”的数据结构来充分利用存储空间。
+
+位域的主要实现方式：把一个字节中的二进制位划分为几个不同的区域，并说明每个区域的位数，每个域有一个域名，允许在程序中按域名进行操作，这样就可以将几个不同的对象用一个字节的二进制位域表示。</code></pre><p>  2、 如何定义</p>
+<pre><code>位域的定义与结构体定义相似，形式如下：</code></pre><p>struct 位域结构名<br>{<br>  类型说明符 位域名: 位域长度;<br>};<br> 例如：</p>
+<p>struct time<br>{<br>   int a:8;<br>   int b:2;<br>   int c:6;<br>}data;//data为time变量，共占用2个字节<br> 注：位域变量的说明与结构体变量的说明方式相同。可以先定义后说明、同时定义说明以及直接说明三种方式。</p>
+<p> 使用注意事项：</p>
+<p>①、一个位域必须存储在同一个字节中，不能跨两个字节，如果一个字节所剩空间不够存放下一位域时，应该从下一个单元开      始，当然也可以有意调整使其从下一个单元开始；</p>
+<p>struct data<br>{<br>   unsigned a: 4;<br>   unsigned :0;//空域,用0填充4位<br>   unsigned b:4;<br>   unsigned c:4;<br>};</p>
+<p>②、位域长度不能大于一个字节的长度，即不能超过8位；</p>
+<p>③、可以定义无名位域用来做填充或调整位置。</p>
+<p>struct num<br>{<br>   int a:1;<br>   int :2;//无名位域，用来填充<br>   int b:3;<br>   int c:2:<br>};<br>3、如何调用</p>
+<pre><code>位域的调用方式和结构成员调用方式相同，形式为：
+
+位域变量名 . 位域名</code></pre><p>   一个完整的例子如下：</p>
+<p>#include&lt;stdio.h&gt;</p>
+<p>int  main()<br>{</p>
+<p>struct test<br>{<br>   unsigned a:1;<br>   unsigned b:3;<br>   unsigned c:4;<br>}tst,*ptst;<br>tst.a = 6;<br>tst.b = 6;<br>tst.c = 6;<br>printf(“a:%d,b:%d,c:%d\n”,tst.a,tst.b,tst.c);<br>ptst = &tst;<br>ptst-&gt;a = 8;<br>ptst-&gt;b = 8;<br>ptst-&gt;c = 8;<br>printf(“a:%d,b:%d,c:%d\n”,ptst-&gt;a,ptst-&gt;b,ptst-&gt;c);<br>return 0;<br>}</p>
+<p>综上：从本质上说，位域是一种结构类型，只不过其成员是按照二进制位来分配的。<br>————————————————<br>版权声明：本文为CSDN博主「喝橙汁的嗷大喵」的原创文章，遵循 CC 4.0 BY-SA 版权协议，转载请附上原文出处链接及本声明。<br>原文链接：<a href="https://blog.csdn.net/M_joy666/article/details/79779340" target="_blank" rel="noopener">https://blog.csdn.net/M_joy666/article/details/79779340</a></p>
+<h2 id="经典C语言面试题4：字节对齐的作用"><a href="#经典C语言面试题4：字节对齐的作用" class="headerlink" title="经典C语言面试题4：字节对齐的作用"></a>经典C语言面试题4：字节对齐的作用</h2><p>   一、什么是字节对齐？ </p>
+<pre><code>在现代计算机中，内存空间都是按照字节(byte)划分的。从理论上讲对任何类型的变量的访问可以从任何地址开始，但实际情况是，访问特定类型的变量的时候经常在特定的内存地址访问，这就需要各种类型的数据按照一定规则在空间上排列，而不是顺序地一个接一个地排放，这种所谓的规则就是字节对齐。这么长一段话的意思是说：字节对齐可以提升存取效率，也就是用空间换时间。</code></pre><p>例如：</p>
+<p>struct A<br>{<br>   char a;<br>   char reserved[3];//使用空间换时间<br>   int b;<br>};</p>
+<p><img src="https://img-blog.csdn.net/20180421171101857?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L01fam95NjY2/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70" alt="img"></p>
+<p>注：其中的reserved成员对于程序并没有意义，只是起到了填补空间达到字节对齐的目的。当然，即使不加这个成员，编译器也会自动为我们补齐，加上它只是起到显式提醒。</p>
+<p>二、为什么需要字节对齐？</p>
+<pre><code>因为各个硬件平台对存储空间的处理上有很大的不同，一些平台对某些特定类型的数据只能从某些特定地址开始存取。比如有些架构的CPU在访问一个没有进行对齐的变量的时候会发生错误,那么在这种架构下编程必须保证字节对齐.其他平台可能没有这种情况，但是最常见的是如果不按照适合其平台要求对数据存放进行对齐，会在存取效率上带来损失。比如有些平台每次读都是从偶地址开始，如果一个int型（假设为32位系统）如果存放在偶地址开始的地方，那么一个读周期就可以读出这32bit，而如果存放在奇地址开始的地方，就需要2个读周期，并对两次读出的结果的高低字节进行拼凑才能得到该32bit数据。显然在读取效率上下降很多。</code></pre><p>三、几个基本概念</p>
+<p>1、基本数据类型的自身对齐值</p>
+<pre><code>例如，char型数据的自身对齐值为1字节，short类型自身对齐值为2字节，int、float、long类型自身对齐值均为4字节，double类型自身对齐值均为8字节。（32位系统）</code></pre><p>2、结构体或类的自身对齐值</p>
+<pre><code>其成员中自身对齐值最大的那个值。</code></pre><p>3、指定对齐值</p>
+<pre><code>通过预编译指令 #pragma pack (value) 来指定的对齐值value。（注：取消自定义对齐值得指令为 #pragma pack ( )）</code></pre><p>4、数据成员、结构体和类的有效对齐值</p>
+<pre><code>其自身对齐值和指定对齐值中较小的那个值。</code></pre><p>四、字节对齐的几个例子浅析</p>
+<p>例1：设有如下两个结构体</p>
+<p>struct A<br>{<br>  char a;<br>  short b;<br>  int c;<br>};<br>struct B<br>{<br>  short b;<br>  int c;<br>  char a;<br>};<br>那么上面两个结构体的大小是多少呢？</p>
+<p>对于结构体A：a是char型数据，占用1字节内存；short型数据，占用2字节内存；int型数据，占用4字节内存。因此，结构体A的自身对齐值为4，sizeof(struct A) =8字节。由于结构体类型数据是按顺序存储结构一个接一个向后排列的，于是其存储方式为：</p>
+<p>为了更加明显地表示“对齐”，我们可以将以上结构想象为以下的行排列：</p>
+<p>对于结构体B：同理也是4字节对齐，但是sizeof(struct B) =12字节。</p>
+<p>想象为以下的行排列：</p>
+<p>例2：为结构体指定对齐值</p>
+<p>pragma pack(2) //指定2字节对齐</p>
+<p>struct C<br>{<br>  char a;<br>  int b;<br>  short c;<br>};</p>
+<p>pragma pack() //取消指定对齐，恢复缺省对齐</p>
+<p>对于结构体C：由于其自身对齐值为4字节（int b），而指定对齐值为2字节，因此该结构体的有效对齐值为较小的2字节，那么sizeof(struct C) = 8 字节。</p>
+<p>pragma pack(1) //指定1字节对齐</p>
+<p>struct D<br>{<br>  char a;<br>  int b;<br>  short c;<br>};</p>
+<p>pragma pack() //取消指定对齐，恢复缺省对齐</p>
+<p>对于结构体D：同理可知，由于其自身对齐值为4字节（int b），而指定对齐值为1字节，因此该结构体的有效对齐值为较小的1字节，那么sizeof(struct D) = 7 字节。</p>
+<p>​    </p>
+<p>五、总结</p>
+<p>由以上分析可知，字节对齐会造成空间上的浪费。 事实上，除了结构体之外，整个程序在给每个变量进行内存分配时都会遵循对齐机制，也都会产生内存空间的浪费。但我们要知道，这种浪费是值得的，因为它换来的是效率的提高。<br>————————————————<br>版权声明：本文为CSDN博主「喝橙汁的嗷大喵」的原创文章，遵循 CC 4.0 BY-SA 版权协议，转载请附上原文出处链接及本声明。<br>原文链接：<a href="https://blog.csdn.net/M_joy666/article/details/80030024" target="_blank" rel="noopener">https://blog.csdn.net/M_joy666/article/details/80030024</a></p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/09/26/C-面试题准备/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="John Doe">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hexo">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2019/09/26/C-面试题准备/" itemprop="url">C++面试题准备</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-09-26T11:15:06+08:00">
+                2019-09-26
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h2 id="C-笔试题准备"><a href="#C-笔试题准备" class="headerlink" title="C++笔试题准备"></a>C++笔试题准备</h2><h4 id="指针和引用的区别"><a href="#指针和引用的区别" class="headerlink" title="指针和引用的区别"></a>指针和引用的区别</h4><p>1.指针是变量，这个变量存放的是所指内容的地址，引用是别名，与所引用的变量占用同一内存空间</p>
+<p>2.指针可以为空，但引用值不能为空，在定义时必须初始化</p>
+<p>3.指针的值可以改变，但是引用在初始化后不可改变</p>
+<p>4.sizeof引用得到的是所指向的变量的的大小</p>
+<p>sizeof指针得到的是指针本身的大小</p>
+<p>5.都可以作为函数参数。引用的主要作用是传递函数的参数和返回值</p>
+<h3 id="typedef和define的区别"><a href="#typedef和define的区别" class="headerlink" title="typedef和define的区别"></a>typedef和define的区别</h3><p>1.用法不同：typedf用来定义一种数据类型的别名，增强程序的可读性。define主要用来定义常量，以及书写复杂使用频繁的宏。(<a href="https://www.jianshu.com/p/cbb6b71d925d宏的使用" target="_blank" rel="noopener">https://www.jianshu.com/p/cbb6b71d925d宏的使用</a>)</p>
+<p>2.执行时间不同：typedef是编译过程的一部分，有类型检查，define是宏定义，不检查类型</p>
+<p>3.作用域不同：typedef有作用域限定，define不受作用域限定，只要是在define声明后的引用都是正确的</p>
+<p>4.对指针的操作不同：typedef和define定义指针时候有很大区别</p>
+<p>typedef定义是语句，后面句尾要加分号，define不是语句，后面不能加分号</p>
+<h3 id="Static在c-c-中的区别和用法（https-blog-csdn-net-weixin-42323413-article-details-89146305）"><a href="#Static在c-c-中的区别和用法（https-blog-csdn-net-weixin-42323413-article-details-89146305）" class="headerlink" title="Static在c/c++中的区别和用法（https://blog.csdn.net/weixin_42323413/article/details/89146305）"></a>Static在c/c++中的区别和用法（<a href="https://blog.csdn.net/weixin_42323413/article/details/89146305）" target="_blank" rel="noopener">https://blog.csdn.net/weixin_42323413/article/details/89146305）</a></h3><p>1.局部静态变量</p>
+<p>2.外部静态变量/函数</p>
+<p>3.静态数据成员/成员函数</p>
+<h3 id="简述指针常量和常量指针的区别？关键字const是什么？static有什么作用？extern有什么作用？"><a href="#简述指针常量和常量指针的区别？关键字const是什么？static有什么作用？extern有什么作用？" class="headerlink" title="简述指针常量和常量指针的区别？关键字const是什么？static有什么作用？extern有什么作用？"></a>简述指针常量和常量指针的区别？关键字const是什么？static有什么作用？extern有什么作用？</h3><p>指针常量是指定义了一个指针，这个指针的值只能在定义时初始化，其他地方不能改变。常量指针<br>是指定义了一个指针，这个指针指向一个只读的对象，不能通过常量指针来改变这个对象的值。<br>指针常量强调的是指针的不可改变性，而常量指针强调的是指针对其所指对象的不可改变性。</p>
+<p>const 用来定义一个只读的变量或对象。主要优点：便于类型检查、同宏定义一样可以方便地进行<br>参数的修改和调整、节省空间，避免不必要的内存分配、可为函数重载提供参考。<br>const 修饰函数参数，是一种编程规范的要求，便于阅读，一看即知这个参数不能被改变，<br>实现时不易出错。</p>
+<p>static 在 C 中主要用于定义全局静态变量、定义局部静态变量、定义静态函数。在 C++中新增了两<br>种作用：定义静态数据成员、静态函数成员。<br>因为 static 定义的变量分配在静态区，所以其定义的变量的默认值为 0，普通变量的默认值<br>为随机数，在定义指针变量时要特别注意。</p>
+<p>extern 标识的变量或者函数声明其定义在别的文件中，提示编译器遇到此变量和函数时在其它模块<br>中寻找其定义。<br>原文链接：<a href="https://blog.csdn.net/weixin_42323413/article/details/84920086" target="_blank" rel="noopener">https://blog.csdn.net/weixin_42323413/article/details/84920086</a></p>
+<h3 id="C-函数重载重写与隐藏"><a href="#C-函数重载重写与隐藏" class="headerlink" title="C++函数重载重写与隐藏"></a>C++函数重载重写与隐藏</h3><p>1、几个概念与区别<br>（1）函数重写：也称作覆盖，是用于类的继承中，函数名、参数个数、类型都相同，仅函数体不同。<br>（2）函数重载：是指同一作用域的不同函数使用相同的函数名，但是参数个数或类型不同。<br>（3）函数隐藏：既不是重载也不是重写，例如：函数名及参数完全相同却又不是虚函数，却在子类中重新实现该函数，也就是所谓的隐藏。</p>
+<p>2、重写/覆盖<br>（1）重写是指派生类函数覆盖基类函数。<br>（2）重写的特征：<br>①不同的作用域（分别位于派生类与基类）；<br>②函数名字相同；<br>③参数相同；<br>④基类函数必须是虚函数；<br>⑤重写函数必须和原函数具有相同的返回类型；<br>⑥const可能会使虚成员函数的重写失效。<br>原文链接：<a href="https://blog.csdn.net/buknow/article/details/80517594" target="_blank" rel="noopener">https://blog.csdn.net/buknow/article/details/80517594</a></p>
+<h2 id="简述C，C-程序编译的内存分配情况"><a href="#简述C，C-程序编译的内存分配情况" class="headerlink" title="简述C，C++程序编译的内存分配情况"></a>简述C，C++程序编译的内存分配情况</h2><p>一个C，C++程序编译时内存分为5大存储区：堆区，栈区，全局区，文字常量区，程序代码区。</p>
+<p>C，C++中内存分配方式可以分为三种：<br>（1）从静态存储区域分配：<br>内存在程序编译时就已经分配好，这块内存在程序的整个运行期间都存在。例如全局变量，static变量等。<br>（2）在栈上分配：<br>在执行函数时，函数内局部变量的存储单元都在栈上创建，函数执行结束时这些存储单元自动被释放。栈内存分配运算内置于处理器的指令集中，效率很高，但是分配的内存容量有限。<br>（3）从堆上分配：<br>即动态内存分配。程序在运行的时候用malloc或new申请任意大小的内存，程序员负责在何时用free或delete释放内存。动态内存的生存期由程序员决定，使用灵活。<br>当在堆上分配了空间，就有责任回收它，否则运行的程序会出现内存泄漏。其次频繁地分配和释放不同大小的对空间将会产生堆内碎块<br>————————————————<br>版权声明：本文为CSDN博主「一步两步先生」的原创文章，遵循 CC 4.0 BY-SA 版权协议，转载请附上原文出处链接及本声明。<br>原文链接：<a href="https://blog.csdn.net/weixin_42323413/article/details/84886597" target="_blank" rel="noopener">https://blog.csdn.net/weixin_42323413/article/details/84886597</a></p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/09/26/python基础/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="John Doe">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hexo">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2019/09/26/python基础/" itemprop="url">python基础</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-09-26T01:11:30+08:00">
+                2019-09-26
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p>#python基础知识</p>
+<h3 id="环境变量"><a href="#环境变量" class="headerlink" title="环境变量"></a>环境变量</h3><p>环境变量指的就是操作系统中的一些变量</p>
+<p>可以通过修改环境变量来对计算机进行配置，主要是用来配置存储路径</p>
+<p>一个环境变量可以是多个值，值与值之间用：隔开（mac上），用；隔开（windows）</p>
+<h3 id="Mac-上配置环境变量"><a href="#Mac-上配置环境变量" class="headerlink" title="Mac 上配置环境变量"></a>Mac 上配置环境变量</h3><p>mac系统的环境变量，加载顺序为：</p>
+<p>a./etc/profile</p>
+<p>b.etc/paths</p>
+<p>c.~/.bash_profile</p>
+<p>d.~/bash_login</p>
+<p>e~/.profile</p>
+<p>f.~/.bashrc</p>
+<p>其中a和b是系统级别的。系统启动就会加载，其余的是用户级别的。</p>
+<p>c,d,e按照从前往后的顺序读取，如果c存在后续就忽略不读，依此类推。</p>
+<p>～/.bashrc没有上述规则，他是bash shell 打开时就载入。</p>
+<h3 id="进制"><a href="#进制" class="headerlink" title="进制"></a>进制</h3><p>十进制</p>
+<p>十六进制   1 2 3 4 5 6 7 8 9 a b c d e f</p>
+<h3 id="文本和字符集"><a href="#文本和字符集" class="headerlink" title="文本和字符集"></a>文本和字符集</h3><p>纯文本，富文本，纯文本只能保存单一的文本，不能保存除文字以外的内容，开发程序使用纯文本</p>
+<p>将字符转换为二进制为编码。将二进制转换为字符，解码。</p>
+<p>编码和解码常用的规则，称为字符集。</p>
+<p>ASCII</p>
+<p>-美国人编码，使用7位来对美国常见字符进行编码</p>
+<p>-包含128个字符</p>
+<p>ISO-8859-1</p>
+<p>-欧洲的编码，使用8位</p>
+<p>-包含256个字符</p>
+<p>GB2312</p>
+<p>GBK</p>
+<p>-国标码，中国码</p>
+<p>unicode</p>
+<p>-万国码，包含世界上所有的语言和符号</p>
+<p>编写程序时，一般使用unicode，有多种实现方法</p>
+<p>UTF-8。 1-5个字节</p>
+<p>UTF-16。2-4个字节</p>
+<p>UTF-32。固定使用4个字节Byte</p>
+<p>乱码</p>
+<p>马上检查字符集是否正确</p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/09/24/VGG-16模型/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1009,263 +1813,18 @@
 <h1 id="2019-09-22"><a href="#2019-09-22" class="headerlink" title="2019-09-22"></a>2019-09-22</h1><p>交通费 14<br>饭费  11<br>生活用品 140<br>总计 165</p>
 <hr>
 <h1 id="2019-09-23"><a href="#2019-09-23" class="headerlink" title="2019-09-23"></a>2019-09-23</h1><p>饭费 8+2+4.5 14.5</p>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/09/23/我的第一篇博客/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="John Doe">
-      <meta itemprop="description" content>
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Hexo">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2019/09/23/我的第一篇博客/" itemprop="url">我的第一篇博客</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">Posted on</span>
-              
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-09-23T01:17:10+08:00">
-                2019-09-23
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <p>2019-09-22</p>
-<p>==========</p>
-<p>交通费 14 </p>
-<p>餐费   11</p>
-<p>日用品  140</p>
-<p>总计   165</p>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/09/23/hello-world/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="John Doe">
-      <meta itemprop="description" content>
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Hexo">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2019/09/23/hello-world/" itemprop="url">Hello World</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">Posted on</span>
-              
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-09-23T00:09:00+08:00">
-                2019-09-23
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <p>Welcome to <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a>! This is your very first post. Check <a href="https://hexo.io/docs/" target="_blank" rel="noopener">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a href="https://hexo.io/docs/troubleshooting.html" target="_blank" rel="noopener">troubleshooting</a> or you can ask me on <a href="https://github.com/hexojs/hexo/issues" target="_blank" rel="noopener">GitHub</a>.</p>
-<h2 id="Quick-Start"><a href="#Quick-Start" class="headerlink" title="Quick Start"></a>Quick Start</h2><h3 id="Create-a-new-post"><a href="#Create-a-new-post" class="headerlink" title="Create a new post"></a>Create a new post</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo new <span class="string">"My New Post"</span></span><br></pre></td></tr></table></figure>
-
-<p>More info: <a href="https://hexo.io/docs/writing.html" target="_blank" rel="noopener">Writing</a></p>
-<h3 id="Run-server"><a href="#Run-server" class="headerlink" title="Run server"></a>Run server</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo server</span><br></pre></td></tr></table></figure>
-
-<p>More info: <a href="https://hexo.io/docs/server.html" target="_blank" rel="noopener">Server</a></p>
-<h3 id="Generate-static-files"><a href="#Generate-static-files" class="headerlink" title="Generate static files"></a>Generate static files</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo generate</span><br></pre></td></tr></table></figure>
-
-<p>More info: <a href="https://hexo.io/docs/generating.html" target="_blank" rel="noopener">Generating</a></p>
-<h3 id="Deploy-to-remote-sites"><a href="#Deploy-to-remote-sites" class="headerlink" title="Deploy to remote sites"></a>Deploy to remote sites</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo deploy</span><br></pre></td></tr></table></figure>
-
-<p>More info: <a href="https://hexo.io/docs/deployment.html" target="_blank" rel="noopener">Deployment</a></p>
+<p>总计  14.5</p>
+<h1 id="2019-09-24"><a href="#2019-09-24" class="headerlink" title="2019-09-24"></a>2019-09-24</h1><p>交通费8+3  11</p>
+<p>饭费   8</p>
+<p>蔬菜 13+10   23</p>
+<p>日用品   35</p>
+<p>总计 77</p>
+<h2 id="2019-09-25"><a href="#2019-09-25" class="headerlink" title="2019-09-25"></a>2019-09-25</h2><p>交通费10+2+1 13</p>
+<p>日用品  35</p>
+<p>绿豆红豆枸杞  25</p>
+<p>饭费   10</p>
+<p>总计  83</p>
+<h2 id="2019-09-26"><a href="#2019-09-26" class="headerlink" title="2019-09-26"></a>2019-09-26</h2><p>淘宝漱口水  89</p>
 
           
         
@@ -1304,6 +1863,10 @@
   </section>
 
   
+  <nav class="pagination">
+    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="extend next" rel="next" href="/page/2/"><i class="fa fa-angle-right"></i></a>
+  </nav>
+
 
 
           </div>
@@ -1347,7 +1910,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">7</span>
+                  <span class="site-state-item-count">12</span>
                   <span class="site-state-item-name">posts</span>
                 </a>
               </div>

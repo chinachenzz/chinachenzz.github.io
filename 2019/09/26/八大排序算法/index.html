@@ -1,0 +1,655 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="en">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT">
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="八大排序：冒泡排序，选择排序法，直接插入法，shell 排序法，快速排序，堆排，归并排序，基数排序冒泡排序每次比较相邻的两个数，如果第一个比第二个大，就交换，一直比较到最后完成一趟冒泡，每次冒泡最后的数变的有序，如果无序会进行 n-1 次的排序，直到所有数都变得有序 时间复杂度：O（n*2） 优化后 O（n） 空间复杂度：O(1) 稳定性：稳定void bublesort(int *arr, in">
+<meta property="og:type" content="article">
+<meta property="og:title" content="八大排序算法">
+<meta property="og:url" content="http://yoursite.com/2019/09/26/八大排序算法/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="八大排序：冒泡排序，选择排序法，直接插入法，shell 排序法，快速排序，堆排，归并排序，基数排序冒泡排序每次比较相邻的两个数，如果第一个比第二个大，就交换，一直比较到最后完成一趟冒泡，每次冒泡最后的数变的有序，如果无序会进行 n-1 次的排序，直到所有数都变得有序 时间复杂度：O（n*2） 优化后 O（n） 空间复杂度：O(1) 稳定性：稳定void bublesort(int *arr, in">
+<meta property="og:locale" content="en">
+<meta property="og:updated_time" content="2019-09-26T04:07:57.331Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="八大排序算法">
+<meta name="twitter:description" content="八大排序：冒泡排序，选择排序法，直接插入法，shell 排序法，快速排序，堆排，归并排序，基数排序冒泡排序每次比较相邻的两个数，如果第一个比第二个大，就交换，一直比较到最后完成一趟冒泡，每次冒泡最后的数变的有序，如果无序会进行 n-1 次的排序，直到所有数都变得有序 时间复杂度：O（n*2） 优化后 O（n） 空间复杂度：O(1) 稳定性：稳定void bublesort(int *arr, in">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2019/09/26/八大排序算法/">
+
+
+
+
+
+  <title>八大排序算法 | Hexo</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="en">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Hexo</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            Archives
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/09/26/八大排序算法/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="John Doe">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hexo">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">八大排序算法</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-09-26T12:07:39+08:00">
+                2019-09-26
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>八大排序：冒泡排序，选择排序法，直接插入法，shell 排序法，快速排序，堆<br>排，归并排序，基数排序<br>冒泡排序<br>每次比较相邻的两个数，如果第一个比第二个大，就交换，一直比较到最后完<br>成一趟冒泡，每次冒泡最后的数变的有序，如果无序会进行 n-1 次的排序，直<br>到所有数都变得有序</p>
+<p>时间复杂度：O（n*2） 优化后 O（n） 空间复杂度：O(1) 稳定性：稳定<br>void bublesort(int *arr, int len)<br>{<br>int tmp = 0;<br>for(int i=0;i&lt;len-1;i++)<br>{<br>bool swap =false;<br>for (int j = 0; j &lt; len- 1-i; j++)<br>{<br>if (arr[j] &gt; arr[j+1])<br>{<br>tmp = arr[j];<br>arr[j] = arr[j + 1];<br>arr[j + 1] = tmp;<br>swap = true;<br>}<br>}<br>if (!swap)<br>{<br>return;<br>}<br>}<br>}<br>选择排序法<br>选择法排序指每次选择所要排序的数组中的最大值（由小到大排序则选择最小值）<br>的数组元素，将这个数组元素的值与最前面没有进行排序的数组元素的值互换</p>
+<p>时间复杂度：O(N*2) 空间复杂度：O(1) 稳定性：不稳定<br>void selectsort(int *arr,int len)<br>{<br>int tmp;<br>int i ;<br>int j ;<br>int min=0;<br>for ( i = 0; i &lt; len - 1; i++)<br>{<br>min = i;<br>for ( j = i+ 1; j &lt; len; j++)<br>{<br>if (arr[j] &lt; arr[min])<br>{<br>tmp = arr[j];<br>arr[j] = arr[min];<br>arr[min] = tmp;<br>}<br>}<br>}<br>}<br>直接插入法<br>插入排序是在一个已经有序的小序列的基础上，一次插入一个元素。比较是从有<br>序序列的末尾开始，也就是想要插入的元素和已经有序的最大者开始比起，如果<br>比它大则直接插入在其后面，否则一直往前找直到找到它该插入的位置。如果碰<br>见一个和插入元素相等的，那么插入元素把想插入的元素放在相等元素的后面。<br>所以，相等元素的前后顺序没有改变，从原无序序列出去的顺序就是排好序后的<br>顺序，所以插入排序是稳定的。</p>
+<p>时间复杂度：O(n^2) 好的情况下 O(1) 空间复杂度：O（1） 稳定性：稳定<br>void insertsort(int *arr,int len)<br>{<br>int i,j,tmp;<br>for ( i = 1; i &lt; len; i++)<br>{<br>tmp = arr[i];<br>for (j = i - 1; i &gt;= 0;j–)<br>{<br>if (tmp &lt; arr[j])<br>{<br>arr[j + 1] = arr[j];<br>}<br>else<br>break;<br>}<br>arr[j + 1] = tmp;<br>}<br>}<br>shell  排序<br>Shell排序是直接插入排序的一种优化采用分组的思想，将一组数分成 n 各小组，<br>对每个小组进行插入排序，然后减小 n 值，重新分组，直到 n=1，最后 n 必须等<br>于1进行插入排序完成最终排序</p>
+<p>时间复杂度：O（n^1.3~~n^1.5） 空间复杂度 O(1) 稳定性：不稳定<br>void Shell(int *arr, int len, int gap)<br>{<br>int tmp = 0;<br>int i, j;<br>for (i = gap; i &lt; len; i++)<br>{<br>tmp = arr[i];<br>for (j = i - gap; j &gt;= 0; j-=gap)<br>{<br>if (arr[j] &gt; tmp)<br>{<br>arr[j + gap] = arr[j];<br>}<br>else<br>break;<br>}<br>arr[j + gap] = tmp;<br>}<br>}<br>void shellsort(int *arr,int len)<br>{<br>int drr[] ={ 5,3,1 };<br>int lend = sizeof(drr) / sizeof(drr[0]);<br>for (int i = 0; i &lt; lend; i++)<br>{<br>Shell(arr, len, drr[i]);<br>}<br>}<br>快速排序<br>时间复杂度：好的情况O（nlog2n）坏的情况(有序)O(n^2)<br>空间复杂度：O(logn) 稳定性：不稳定<br>1、先从数列中取出一个数作为基准数<br>2、分区过程，将比这个数大的数全放到它的右边，小于或等于它的数全放到它<br>的左边<br>3、再对左右区间重复第二步，直到各区间只有一个数<br>以第一个数为基准将其放进 TMP 中从 high 开始比较如果 high&lt;tmp 则把 high 放<br>入 low，然后 low++，若 arr[low]&gt;tmp,则把 low 放入high，然后 high–,若<br>high&lt;tmp,则把high给low,然后Low++，进行循环</p>
+<p>int Partation(int<em>arr,int low, int hign)<br>{<br>int tmp;<br>tmp = arr[low];<br>while (low &lt; hign)<br>{<br>while ((low&lt; hign) &amp;&amp; arr[hign] &gt;=tmp)<br>{<br>hign–;<br>}<br>if (low &gt;= hign)<br>{<br>break;<br>}<br>else<br>{<br>arr[low] = arr[hign];<br>}<br>while ((low&lt; hign) &amp;&amp; arr[low] &lt;= tmp)<br>{<br>low++;<br>}<br>if (low &gt;= hign)<br>{<br>break;<br>}<br>else<br>{<br>arr[hign] =arr[low];<br>}<br>}<br>arr[low] = tmp;<br>return low;<br>//查找 par 的位置，找到后刚好完成第一次快排<br>}<br>一，//递归<br>void quick(int <em>arr, int low, int hign)<br>{<br>int par = Partation(arr, low, hign);<br>if(par&gt;low+1)<br>{<br>quick(arr, low, par - 1);<br>}<br>//从第一次快速排列后的左边开始重新定义新的hign为par-1,并对左边进行快速排列，查找新的par<br>值<br>if (par &lt; hign - 1)<br>{<br>quick(arr, par + 1, hign);<br>}<br>//从第一次快速排列后的右边开始重新查找新的 low 为 0,并对右边进行快速排列，查找新的 par<br>}<br>void quicksort(int *arr,int len)<br>{<br>quick(arr, 0, len - 1);<br>//整个数列从头到尾查找 par 进行第一次快速排列<br>}<br>二//非递归 进行入栈操作进行排列<br>#include&lt;math.h&gt;<br>void quicksort1(int</em>arr, int len)<br>{<br>int tmpsize= (int)ceil(log((double)len));<br>int *stack = (int</em>)malloc(sizeof(int)<em>tmpsize</em>2);<br>//开辟栈的内存大小( O（nlog2n） )<br>assert(stack != NULL);<br>int low = 0;<br>int hign = len - 1;<br>int par = Partation(arr, 0, len - 1);<br>//第一次排序后为 9,5,13,2,6,20,32,25,76，查找第一个 par</p>
+<p>int top = 0;<br>if (par &gt; low + 1)<br>{<br>stack[top++] = low;<br>stack[top++] = par - 1;<br>}<br>//对 par 的左边进行入栈操作，入栈 0,4<br>if (par &lt; hign-1)<br>{<br>stack[top++] = par + 1;<br>stack[top++] = hign;<br>}</p>
+<p>//对 par 的右边进行入栈操作，入栈 6,8<br>while (top &gt; 0)<br>{<br>hign = stack[–top];<br>low = stack[–top];<br>par = Partation(arr, low, hign);<br>//（1.a）赋予 hign,low,par 新的位置，hign 位置为 8，low 位置为 6，par 位置为 7，先进行右侧<br>的排序</p>
+<p>if (par &gt; low + 1)<br>{<br>stack[top++] = low;<br>stack[top++] = par - 1;<br>}<br>//（2），执行完（1）操作后，栈内所含数据为 0,4 对初始 par 的左边操作赋予 hign，low，par 新的<br>位置，此时 hign 位置为 4，low 位置为 0，par 位置为 3</p>
+<p>//此时 par 的右侧有序不需执行下面的的操作，接下来再次执行 par 左侧的入栈操作，新栈<br>进栈数据 0,2</p>
+<p>//再次重新 赋予 hign,low,par 新的位置，hign 位置为 2，low 位置为 0，par 位置为 1，此时数据排<br>序完成</p>
+<p>if (par &lt; hign - 1)<br>{<br>stack[top++] = par + 1;<br>stack[top++] = hign;<br>}<br>//（1.b）对新 par 的右边进行入栈操作，此时（1.a）操作后右侧数据有序<br>}<br>}<br>快速排序的三种方法：<br>（1 ） 随机选取基准法<br>思想：取待排序列中任意一个元素作为基准<br>void Swap(int *arr, intlow, int hign)<br>{<br>int tmp = arr[low];<br>arr[low] = arr[hign];<br>arr[hign] =tmp;<br>}<br>//交换 low，hign 所在位置的值<br>void quick2(int *arr, int low, int hign)<br>{<br>Swap(arr, low, rand() %(hign - low) + low);<br>int par = Partation(arr, low, hign);<br>//交换 low 与随机产生 hign 的值,确定新的 hign，low，par 位置<br>if (par&gt;low+ 1)<br>{<br>quick2(arr,low, par - 1);<br>}<br>//对 par 左边进行排序<br>if (par &lt; hign - 1)<br>{<br>quick2(arr,par + 1, hign);<br>}<br>//对 par 右边进行排序<br>}<br>void quicksort2(int *arr, int len)<br>{<br>quick(arr, 0, len - 1);<br>}<br>（2 ） 三数取中法<br>void Median_of_three(int *arr, int low, int mid, int hign)<br>{<br>//取三个数的中间值 arr[mid]&lt;=arr[low]&lt;=arr[hign]<br>if (arr[mid] &gt; arr[low])<br>{<br>Swap(arr, mid,low);<br>}<br>if (arr[mid] &gt; arr[hign])<br>{<br>Swap(arr, mid, hign);<br>}<br>if (arr[low] &gt; arr[hign])<br>{<br>Swap(arr, low, hign);<br>}<br>void quick3(int *arr, int low, int hign)<br>{<br>Median_of_three(arr, low, (hign - low) / 2, hign);<br>//取待排列的序列中的 low，mid，hign 值，选取中间值为驱轴</p>
+<p>int par = Partation(arr, low, hign);<br>if (par &lt; hign - 1)<br>{<br>quick3(arr,par + 1, hign);<br>}</p>
+<p>if (par&gt;low+ 1)<br>{<br>quick3(arr,low, par - 1);<br>}</p>
+<p>}<br>void quicksort3(int <em>arr, int len)<br>{<br>quick3(arr,0, len - 1);<br>}<br>（3 ） 基准聚拢法<br>待排序序列1467667686三数取中选取枢轴：下标为4的数6<br>转换后，待分割序列：6 467167686<br>枢轴key：6<br>第一步，在划分过程中，把与key相等元素放入数组的两端<br>结果为：6416(枢轴)787666<br>此时，与6相等的元素全放入在两端了<br>第二步，划分结束后，把与key相等的元素移到枢轴周围<br>结果为：1466(枢轴) 666787<br>此时，与6相等的元素全移到枢轴周围了<br>之后，在14和 787两个子序列进行快排<br>void Focus_Num(int *arr, int low, int par,int hign,int</em>left,int*right)<br>{<br>int i;<br>int Pleft =par - 1;<br>//聚拢左边相同数<br>for (i = par - 1; i &gt;= low; i–)<br>{<br>if (arr[i] == arr[par])<br>{<br>if (i == Pleft)<br>{<br>Pleft–;<br>}<br>//在 arr[i]==arr[par]的前提下，如果 i=Pleft,Pleft 向左移动，再次查找与 par 代表值相同的数<br>if (i != Pleft)<br>{<br>Swap(arr, i, Pleft);<br>Pleft–;<br>}<br>//在 arr[i]==arr[par]的前提下，如果 i！=Pleft,先交换 i 与 Pleft 所代表的值，再使 Pleft 向左<br>移动，再次查找与 par 代表值相同的数<br>}<br>}<br>int Pright = par + 1;<br>//聚拢右边相同数<br>for (i = par + 1; i &lt;= hign; i++)<br>{<br>if (arr[i] == arr[par])<br>{<br>if (i == Pright)<br>{<br>Pright++;<br>}<br>//在 arr[i]==arr[par]的前提下，如果 i=Pright,Pright 向右移动，再次查找与 par 代表值相同的<br>数<br>if (i != Pright)<br>{<br>Swap(arr, i, Pright);<br>Pright++;<br>}<br>//在 arr[i]==arr[par]的前提下，如果 i！=Pright,先交换 i 与 Pright 所代表的值，再使 Pright 向<br>右移动，再次查找与 par 代表值相同的数<br>}<br>}<br>*left = Pleft;<br>*right = Pright;<br>}<br>void quick4(int *arr, int low, int hign)<br>{<br>int par = Partation(arr, low, hign);<br>int left=par-1;<br>int right=par+1;<br>Focus_Num(arr, low, par, hign,&amp;left,&amp;right);<br>if (par&gt;low+ 1)<br>{<br>quick4(arr,low,left);<br>}<br>if (par &lt; hign - 1)<br>{<br>quick4(arr,right, hign);<br>}<br>}<br>void quicksort4(int *arr, int len)<br>{<br>quick4(arr,0, len - 1);<br>}<br>堆排<br>时间复杂度：O（nlog2n）最好最坏情况<br>空间复杂度:O（1) 稳定性：不稳定<br>堆排序是一种树形选择排序，在排序过程中可以把元素看成是一颗完全二叉树，<br>每个节点都大（小）于它的两个子节点，当每个节点都大于等于它的两个子节点<br>时，就称为大顶堆，也叫堆有序； 当每个节点都小于等于它的两个子节点时，<br>就称为小根堆。<br>思路（大根堆）：<br>（1）将长度为n的待排序的数组进行堆有序化构成一个大顶堆；<br>（2）将根节点与尾节点交换并输出此时的尾节点；<br>（3）将剩余的n-1个节点重新进行堆有序化；<br>（4）重复进行（2）（3）步骤直至构成一个有序序列</p>
+<p>void adjust(int<em>arr, int start, intend)<br>{<br>//将原数列调整为大根堆<br>int tmp;<br>tmp = arr[start];<br>//由子代（n）推出父代 ——————&gt; （n-1）/2<br>//由父代（n）推出子代 ——————&gt; 左子叶（2n+2）右子叶(2n+2)<br>for (int i = 2 * start + 1; i &lt;= end; i = 2 * i+ 1)<br>{<br>//i 为最后一个子叶的父代所在的位置<br>if (i &lt; end&amp;&amp; arr[i] &lt;arr[i + 1])<br>{<br>i++;//i 当前的下标肯定是左右孩子里最大的值<br>}<br>if (arr[i] &gt; tmp)<br>{<br>arr[start] = arr[i];<br>start = i;<br>}<br>else<br>{<br>break;<br>}<br>}<br>arr[start] = tmp;<br>//将 start 所代表的值赋值给 tmp,并将其与子代值进行比较，值小的置于 start 值所在的位置，再<br>进行下一个 start 操作，逐步将较大的值置于底部<br>}<br>void heapsort(int</em>arr, int len)<br>{<br>for (int i = (len - 1 -1) / 2; i &gt;= 0; i–)<br>{<br>adjust(arr,i, len - 1);<br>}<br>//第一次构造成大根堆</p>
+<p>int tmp = 0;<br>for (int i = 0; i &lt; len- 1; i++)<br>{<br>tmp = arr[0];<br>arr[0] = arr[len - 1 - i];<br>arr[len - 1- i] = tmp;<br>//根与最后的子叶交换，此时最大值位置确定<br>adjust(arr,0, len-1-i-1);<br>//再次将剩余数据构造大顶推树并进行根与最后子叶的交换，每交换一次确定出剩余数据最大值的位<br>置<br>}<br>}</p>
+<p>归并排序<br>时间复杂度：O(nlog2n) 空间复杂度：O(n) 稳定性：稳定<br>即先使每个子序列有序，再使子序列段间有序。若将两个有序表合并成一个有序<br>表，称为二路归并。<br>对以下数据5 10 8 14 19 1 35 25，单个数据有序，再进行排序使两个<br>两个数据有序，如下图示：</p>
+<p>void Merge(int<em>arr, intlen, int gap)<br>{<br>//申请一个数组<br>int *brr = (int</em>)malloc(sizeof(int)*len);<br>assert(brr != NULL);<br>//判断 start1，end1，start2，end2 的位置<br>int i = 0;<br>int s1 = 0;<br>int e1 = s1+gap - 1;;<br>int s2 = e1+ 1;<br>int e2 = s2+gap-1&lt;len-1?s2+gap-1:len-1;<br>//当有两个归并段时<br>while (s2 &lt;len)<br>{<br>//两个归并段都有数据<br>while ((s1 &lt;= e1) &amp;&amp; (s2 &lt;= e2))<br>{<br>if (arr[s1]&lt;= arr[s2])<br>{<br>brr[i++] = arr[s1++];<br>}<br>else<br>{<br>brr[i++] = arr[s2++];<br>}<br>}</p>
+<p>//退出循环的两种方式<br>while (s1 &lt;= e1)<br>{<br>brr[i++]=arr[s1++];<br>}<br>while (s2 &lt;= e2)<br>{<br>brr[i++] = arr[s2++];<br>}<br>s1 = e2 + 1;<br>e1 = s1 + gap - 1;;<br>s2 = e1 + 1;<br>e2 = s2 + gap - 1&lt;len - 1 ? s2 + gap - 1 : len- 1;<br>}<br>//只有一个归并段时<br>while (s1 &lt;len)<br>{<br>brr[i++] = arr[s1++];<br>}<br>for (int i = 0; i &lt; len; i++)<br>{<br>arr[i]=brr[i];<br>}<br>free(brr);<br>brr = NULL;<br>}<br>void Mergesort(int <em>arr, int len)<br>{<br>for (int i = 1; i &lt; len; i</em>=2)<br>{<br>Merge(arr, len, i);<br>}<br>}<br>基数排序<br>又称桶子法，根据当前待排序的每一位上的数字进行入桶排序，桶的数量跟当前<br>单个数字的取值范围有关等到最低位排完得到一个子序列，再将这个序列按照次<br>低位的大小进入相应的桶中，一直排到最高位为止，数组排序完成。</p>
+<p>//每个桶内存储数据时相当于进行单链表的操作，创建单链表<br>typedef struct Node<br>{<br>int data;<br>struct Node<em>next;<br>}Node, *List;<br>//单链表的初始化<br>void InitList(List plist)<br>{<br>assert(plist != NULL);<br>plist-&gt;next= NULL;<br>}<br>//新建一个节点<br>static Node</em>GetNode(int val)<br>{<br>Node *pGet = (Node *)malloc(sizeof(Node));<br>assert(pGet!= NULL);<br>pGet-&gt;data = val;<br>pGet-&gt;next = NULL;<br>return pGet;<br>}<br>//单链表的插入操作，尾插。入桶<br>bool Insert(List plist,int val)<br>{<br>Node *p = plist;<br>while (p-&gt;next != NULL)<br>{<br>p = p-&gt;next;<br>}<br>Node *pGet = GetNode(val);<br>p-&gt;next = pGet;<br>return true;<br>}<br>//删除并保存值，出桶操作<br>bool DelFirst(List plist, int *rtv)<br>{<br>Node *p = plist-&gt;next;<br>if (p == NULL)<br>{<br>return false;<br>}<br>*rtv = p-&gt;data;<br>plist-&gt;next= p-&gt;next;<br>free(p);<br>p = NULL;<br>return true;<br>}<br>//找出最大数并确定最大数的位数<br>int GetBitMax(int *arr,int len)<br>{<br>int max = arr[0];<br>int count =0;<br>for (int i = 1; i &lt; len;i++)<br>{<br>if (arr[i] &gt; max)<br>{<br>max = arr[i];<br>}<br>}<br>while (max != 0)<br>{<br>count++;<br>max /= 10;<br>}<br>return count;<br>}<br>//得到 figure 位上的数值<br>int Getnum(int num, intfigure)<br>{<br>for (int j = 0; j &lt; figure; j++)<br>{<br>num = num /10;<br>}<br>return num % 10;<br>}<br>void Base(int *arr, intlen, int figure)<br>{<br>assert(arr != NULL);<br>//创建桶<br>Node head[10];<br>for (int j = 0; j &lt; 10;j++)<br>{<br>InitList(&amp;head[j]);//初始化<br>}<br>int tmp;<br>for (int j = 0; j &lt; len; j++)<br>{<br>tmp = Getnum(arr[j], figure);//得到 j 号下表 figure 位的数值<br>Insert(&amp;head[tmp], arr[j]);<br>//入桶，遍历数组 figure 位相应的数据进入相应的桶里<br>}<br>int n = 0;<br>for (int j = 0; j &lt; 10;)<br>{<br>if (DelFirst(&amp;head[j], &amp;arr[n]))<br>{</p>
+<p>n++;//j 号桶不一定只有一个数据，遍历整个数组用 n 代表一个桶里存放数据的下表，<br>避免出现多个数据使数据存放出现问题，覆盖掉原先值或赋值后不改变<br>}<br>else<br>{<br>j++;//下一个桶<br>}<br>}<br>}<br>void Basesort(int *arr,int len)<br>{<br>int count =GetBitMax(arr, len);<br>for (int i = 0; i &lt; count; i++)<br>{<br>Base(arr, len, i);//i 表示当前数字从右往左数的位数<br>}<br>}<br>————————————————<br>版权声明：本文为CSDN博主「一步两步先生」的原创文章，遵循 CC 4.0 BY-SA 版权协议，转载请附上原文出处链接及本声明。<br>原文链接：<a href="https://blog.csdn.net/weixin_42323413/article/details/83001018" target="_blank" rel="noopener">https://blog.csdn.net/weixin_42323413/article/details/83001018</a></p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/09/26/C-面试题基础/" rel="next" title="C++面试题基础">
+                <i class="fa fa-chevron-left"></i> C++面试题基础
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/09/26/C-中实现进程同步的四种方式/" rel="prev" title="C++中实现进程同步的四种方式">
+                C++中实现进程同步的四种方式 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+
+      <section class="site-overview-wrap sidebar-panel sidebar-panel-active">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">John Doe</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">12</span>
+                  <span class="site-state-item-name">posts</span>
+                </a>
+              </div>
+            
+
+            
+
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">John Doe</span>
+
+  
+</div>
+
+
+  <div class="powered-by">Powered by <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a></div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Muse</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

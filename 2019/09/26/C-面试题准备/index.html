@@ -1,0 +1,680 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="en">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT">
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="C++笔试题准备指针和引用的区别1.指针是变量，这个变量存放的是所指内容的地址，引用是别名，与所引用的变量占用同一内存空间 2.指针可以为空，但引用值不能为空，在定义时必须初始化 3.指针的值可以改变，但是引用在初始化后不可改变 4.sizeof引用得到的是所指向的变量的的大小 sizeof指针得到的是指针本身的大小 5.都可以作为函数参数。引用的主要作用是传递函数的参数和返回值 typedef和">
+<meta property="og:type" content="article">
+<meta property="og:title" content="C++面试题准备">
+<meta property="og:url" content="http://yoursite.com/2019/09/26/C-面试题准备/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="C++笔试题准备指针和引用的区别1.指针是变量，这个变量存放的是所指内容的地址，引用是别名，与所引用的变量占用同一内存空间 2.指针可以为空，但引用值不能为空，在定义时必须初始化 3.指针的值可以改变，但是引用在初始化后不可改变 4.sizeof引用得到的是所指向的变量的的大小 sizeof指针得到的是指针本身的大小 5.都可以作为函数参数。引用的主要作用是传递函数的参数和返回值 typedef和">
+<meta property="og:locale" content="en">
+<meta property="og:updated_time" content="2019-09-26T04:13:55.585Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="C++面试题准备">
+<meta name="twitter:description" content="C++笔试题准备指针和引用的区别1.指针是变量，这个变量存放的是所指内容的地址，引用是别名，与所引用的变量占用同一内存空间 2.指针可以为空，但引用值不能为空，在定义时必须初始化 3.指针的值可以改变，但是引用在初始化后不可改变 4.sizeof引用得到的是所指向的变量的的大小 sizeof指针得到的是指针本身的大小 5.都可以作为函数参数。引用的主要作用是传递函数的参数和返回值 typedef和">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2019/09/26/C-面试题准备/">
+
+
+
+
+
+  <title>C++面试题准备 | Hexo</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="en">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Hexo</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            Archives
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/09/26/C-面试题准备/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="John Doe">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hexo">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">C++面试题准备</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-09-26T11:15:06+08:00">
+                2019-09-26
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="C-笔试题准备"><a href="#C-笔试题准备" class="headerlink" title="C++笔试题准备"></a>C++笔试题准备</h2><h4 id="指针和引用的区别"><a href="#指针和引用的区别" class="headerlink" title="指针和引用的区别"></a>指针和引用的区别</h4><p>1.指针是变量，这个变量存放的是所指内容的地址，引用是别名，与所引用的变量占用同一内存空间</p>
+<p>2.指针可以为空，但引用值不能为空，在定义时必须初始化</p>
+<p>3.指针的值可以改变，但是引用在初始化后不可改变</p>
+<p>4.sizeof引用得到的是所指向的变量的的大小</p>
+<p>sizeof指针得到的是指针本身的大小</p>
+<p>5.都可以作为函数参数。引用的主要作用是传递函数的参数和返回值</p>
+<h3 id="typedef和define的区别"><a href="#typedef和define的区别" class="headerlink" title="typedef和define的区别"></a>typedef和define的区别</h3><p>1.用法不同：typedf用来定义一种数据类型的别名，增强程序的可读性。define主要用来定义常量，以及书写复杂使用频繁的宏。(<a href="https://www.jianshu.com/p/cbb6b71d925d宏的使用" target="_blank" rel="noopener">https://www.jianshu.com/p/cbb6b71d925d宏的使用</a>)</p>
+<p>2.执行时间不同：typedef是编译过程的一部分，有类型检查，define是宏定义，不检查类型</p>
+<p>3.作用域不同：typedef有作用域限定，define不受作用域限定，只要是在define声明后的引用都是正确的</p>
+<p>4.对指针的操作不同：typedef和define定义指针时候有很大区别</p>
+<p>typedef定义是语句，后面句尾要加分号，define不是语句，后面不能加分号</p>
+<h3 id="Static在c-c-中的区别和用法（https-blog-csdn-net-weixin-42323413-article-details-89146305）"><a href="#Static在c-c-中的区别和用法（https-blog-csdn-net-weixin-42323413-article-details-89146305）" class="headerlink" title="Static在c/c++中的区别和用法（https://blog.csdn.net/weixin_42323413/article/details/89146305）"></a>Static在c/c++中的区别和用法（<a href="https://blog.csdn.net/weixin_42323413/article/details/89146305）" target="_blank" rel="noopener">https://blog.csdn.net/weixin_42323413/article/details/89146305）</a></h3><p>1.局部静态变量</p>
+<p>2.外部静态变量/函数</p>
+<p>3.静态数据成员/成员函数</p>
+<h3 id="简述指针常量和常量指针的区别？关键字const是什么？static有什么作用？extern有什么作用？"><a href="#简述指针常量和常量指针的区别？关键字const是什么？static有什么作用？extern有什么作用？" class="headerlink" title="简述指针常量和常量指针的区别？关键字const是什么？static有什么作用？extern有什么作用？"></a>简述指针常量和常量指针的区别？关键字const是什么？static有什么作用？extern有什么作用？</h3><p>指针常量是指定义了一个指针，这个指针的值只能在定义时初始化，其他地方不能改变。常量指针<br>是指定义了一个指针，这个指针指向一个只读的对象，不能通过常量指针来改变这个对象的值。<br>指针常量强调的是指针的不可改变性，而常量指针强调的是指针对其所指对象的不可改变性。</p>
+<p>const 用来定义一个只读的变量或对象。主要优点：便于类型检查、同宏定义一样可以方便地进行<br>参数的修改和调整、节省空间，避免不必要的内存分配、可为函数重载提供参考。<br>const 修饰函数参数，是一种编程规范的要求，便于阅读，一看即知这个参数不能被改变，<br>实现时不易出错。</p>
+<p>static 在 C 中主要用于定义全局静态变量、定义局部静态变量、定义静态函数。在 C++中新增了两<br>种作用：定义静态数据成员、静态函数成员。<br>因为 static 定义的变量分配在静态区，所以其定义的变量的默认值为 0，普通变量的默认值<br>为随机数，在定义指针变量时要特别注意。</p>
+<p>extern 标识的变量或者函数声明其定义在别的文件中，提示编译器遇到此变量和函数时在其它模块<br>中寻找其定义。<br>原文链接：<a href="https://blog.csdn.net/weixin_42323413/article/details/84920086" target="_blank" rel="noopener">https://blog.csdn.net/weixin_42323413/article/details/84920086</a></p>
+<h3 id="C-函数重载重写与隐藏"><a href="#C-函数重载重写与隐藏" class="headerlink" title="C++函数重载重写与隐藏"></a>C++函数重载重写与隐藏</h3><p>1、几个概念与区别<br>（1）函数重写：也称作覆盖，是用于类的继承中，函数名、参数个数、类型都相同，仅函数体不同。<br>（2）函数重载：是指同一作用域的不同函数使用相同的函数名，但是参数个数或类型不同。<br>（3）函数隐藏：既不是重载也不是重写，例如：函数名及参数完全相同却又不是虚函数，却在子类中重新实现该函数，也就是所谓的隐藏。</p>
+<p>2、重写/覆盖<br>（1）重写是指派生类函数覆盖基类函数。<br>（2）重写的特征：<br>①不同的作用域（分别位于派生类与基类）；<br>②函数名字相同；<br>③参数相同；<br>④基类函数必须是虚函数；<br>⑤重写函数必须和原函数具有相同的返回类型；<br>⑥const可能会使虚成员函数的重写失效。<br>原文链接：<a href="https://blog.csdn.net/buknow/article/details/80517594" target="_blank" rel="noopener">https://blog.csdn.net/buknow/article/details/80517594</a></p>
+<h2 id="简述C，C-程序编译的内存分配情况"><a href="#简述C，C-程序编译的内存分配情况" class="headerlink" title="简述C，C++程序编译的内存分配情况"></a>简述C，C++程序编译的内存分配情况</h2><p>一个C，C++程序编译时内存分为5大存储区：堆区，栈区，全局区，文字常量区，程序代码区。</p>
+<p>C，C++中内存分配方式可以分为三种：<br>（1）从静态存储区域分配：<br>内存在程序编译时就已经分配好，这块内存在程序的整个运行期间都存在。例如全局变量，static变量等。<br>（2）在栈上分配：<br>在执行函数时，函数内局部变量的存储单元都在栈上创建，函数执行结束时这些存储单元自动被释放。栈内存分配运算内置于处理器的指令集中，效率很高，但是分配的内存容量有限。<br>（3）从堆上分配：<br>即动态内存分配。程序在运行的时候用malloc或new申请任意大小的内存，程序员负责在何时用free或delete释放内存。动态内存的生存期由程序员决定，使用灵活。<br>当在堆上分配了空间，就有责任回收它，否则运行的程序会出现内存泄漏。其次频繁地分配和释放不同大小的对空间将会产生堆内碎块<br>————————————————<br>版权声明：本文为CSDN博主「一步两步先生」的原创文章，遵循 CC 4.0 BY-SA 版权协议，转载请附上原文出处链接及本声明。<br>原文链接：<a href="https://blog.csdn.net/weixin_42323413/article/details/84886597" target="_blank" rel="noopener">https://blog.csdn.net/weixin_42323413/article/details/84886597</a></p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/09/26/python基础/" rel="next" title="python基础">
+                <i class="fa fa-chevron-left"></i> python基础
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/09/26/C-面试题基础/" rel="prev" title="C++面试题基础">
+                C++面试题基础 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">John Doe</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">12</span>
+                  <span class="site-state-item-name">posts</span>
+                </a>
+              </div>
+            
+
+            
+
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#C-笔试题准备"><span class="nav-number">1.</span> <span class="nav-text">C++笔试题准备</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#指针和引用的区别"><span class="nav-number">1.0.1.</span> <span class="nav-text">指针和引用的区别</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#typedef和define的区别"><span class="nav-number">1.1.</span> <span class="nav-text">typedef和define的区别</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Static在c-c-中的区别和用法（https-blog-csdn-net-weixin-42323413-article-details-89146305）"><span class="nav-number">1.2.</span> <span class="nav-text">Static在c/c++中的区别和用法（https://blog.csdn.net/weixin_42323413/article/details/89146305）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#简述指针常量和常量指针的区别？关键字const是什么？static有什么作用？extern有什么作用？"><span class="nav-number">1.3.</span> <span class="nav-text">简述指针常量和常量指针的区别？关键字const是什么？static有什么作用？extern有什么作用？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#C-函数重载重写与隐藏"><span class="nav-number">1.4.</span> <span class="nav-text">C++函数重载重写与隐藏</span></a></li></ol><li class="nav-item nav-level-2"><a class="nav-link" href="#简述C，C-程序编译的内存分配情况"><span class="nav-number">2.</span> <span class="nav-text">简述C，C++程序编译的内存分配情况</span></a></li></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">John Doe</span>
+
+  
+</div>
+
+
+  <div class="powered-by">Powered by <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a></div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Muse</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

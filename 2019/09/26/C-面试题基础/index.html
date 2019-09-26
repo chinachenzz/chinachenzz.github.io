@@ -1,0 +1,729 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="en">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT">
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="C语言编译过程为：预处理–&amp;gt;编译–&amp;gt;汇编–&amp;gt;链接1、预处理（Pre-processing） 对源程序中的伪指令（以#开头的指令）和特殊符号进行处理。伪指令包括：宏定义指令、条件编译指令、头文件包含指令。2、编译（Compiling） 将源程序转换为计算机可以执行的二进制代码。  说明：在linux下，目录文件的缺省后缀为 .o   编译程序将通过词法分析和语法分析，将其翻译为等价">
+<meta property="og:type" content="article">
+<meta property="og:title" content="C++面试题基础">
+<meta property="og:url" content="http://yoursite.com/2019/09/26/C-面试题基础/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="C语言编译过程为：预处理–&amp;gt;编译–&amp;gt;汇编–&amp;gt;链接1、预处理（Pre-processing） 对源程序中的伪指令（以#开头的指令）和特殊符号进行处理。伪指令包括：宏定义指令、条件编译指令、头文件包含指令。2、编译（Compiling） 将源程序转换为计算机可以执行的二进制代码。  说明：在linux下，目录文件的缺省后缀为 .o   编译程序将通过词法分析和语法分析，将其翻译为等价">
+<meta property="og:locale" content="en">
+<meta property="og:image" content="https://img-blog.csdn.net/20180421171101857?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L01fam95NjY2/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70">
+<meta property="og:updated_time" content="2019-09-26T04:08:00.131Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="C++面试题基础">
+<meta name="twitter:description" content="C语言编译过程为：预处理–&amp;gt;编译–&amp;gt;汇编–&amp;gt;链接1、预处理（Pre-processing） 对源程序中的伪指令（以#开头的指令）和特殊符号进行处理。伪指令包括：宏定义指令、条件编译指令、头文件包含指令。2、编译（Compiling） 将源程序转换为计算机可以执行的二进制代码。  说明：在linux下，目录文件的缺省后缀为 .o   编译程序将通过词法分析和语法分析，将其翻译为等价">
+<meta name="twitter:image" content="https://img-blog.csdn.net/20180421171101857?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L01fam95NjY2/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2019/09/26/C-面试题基础/">
+
+
+
+
+
+  <title>C++面试题基础 | Hexo</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="en">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Hexo</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            Archives
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/09/26/C-面试题基础/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="John Doe">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hexo">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">C++面试题基础</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-09-26T11:50:49+08:00">
+                2019-09-26
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h3 id="C语言编译过程为：预处理–-gt-编译–-gt-汇编–-gt-链接"><a href="#C语言编译过程为：预处理–-gt-编译–-gt-汇编–-gt-链接" class="headerlink" title="C语言编译过程为：预处理–&gt;编译–&gt;汇编–&gt;链接"></a>C语言编译过程为：预处理–&gt;编译–&gt;汇编–&gt;链接</h3><p>1、预处理（Pre-processing）</p>
+<pre><code>对源程序中的伪指令（以#开头的指令）和特殊符号进行处理。伪指令包括：宏定义指令、条件编译指令、头文件包含指令。</code></pre><p>2、编译（Compiling）</p>
+<pre><code>将源程序转换为计算机可以执行的二进制代码。
+
+说明：在linux下，目录文件的缺省后缀为 .o
+
+ 编译程序将通过词法分析和语法分析，将其翻译为等价的汇编代码。在使用gcc编译时，缺省情况下不输出此汇编代码文件，       如果需要可在编译时指定 -s 选项，这样就会输出同名的汇编文件。</code></pre><p>3、汇编（Assembling）</p>
+<pre><code>将汇编语言代码翻译为机器语言的过程，产生一个名为 .o 的目标文件。</code></pre><p>4、链接（Linking）</p>
+<pre><code>目标代码不能直接执行，要将目标代码变为可执行程序，还需要进行链接操作，这样才会生产真正可执行的程序。
+
+链接操作最重要的步骤就是将函数库中的相应代码组合到目标文件中。</code></pre><p>原文链接：<a href="https://blog.csdn.net/M_joy666/article/details/79776856" target="_blank" rel="noopener">https://blog.csdn.net/M_joy666/article/details/79776856</a></p>
+<h2 id="经典C语言面试题1：malloc-和-new的区别？"><a href="#经典C语言面试题1：malloc-和-new的区别？" class="headerlink" title="经典C语言面试题1：malloc 和 new的区别？"></a>经典C语言面试题1：malloc 和 new的区别？</h2><p>①、malloc/ free是 C++/C语言的标准库函数，而new/ delete是C++的运算符。</p>
+<p>②、malloc内存分配成功返回的类型为void<em>，需要通过强制类型转换将void</em>转换为我们需要的类型。</p>
+<p>③、new内存分配失败时会抛出bac_alloc异常，不会返回NULL；而malloc分配失败时则返回NULL。</p>
+<p>④、使用new操作符申请内存分配是无需指定内存块的大小，而malloc则需要显式地指出所需的内存大小。<br>原文链接：<a href="https://blog.csdn.net/M_joy666/article/details/79777012" target="_blank" rel="noopener">https://blog.csdn.net/M_joy666/article/details/79777012</a></p>
+<h2 id="经典C语言面试题2：static关键字的用法"><a href="#经典C语言面试题2：static关键字的用法" class="headerlink" title="经典C语言面试题2：static关键字的用法"></a>经典C语言面试题2：static关键字的用法</h2><p>C语言中static关键字的用法主要有以下三种：</p>
+<p>1、在函数体内，static变量的作用范围为该函数体，该变量的内存只能被分配一次，下次调用时维持上次的值（即具有记忆功能）。</p>
+<p>2、在模块内的static全局变量可以被模块内的所有函数访问，但是不能被模块外的函数访问（注：即使在模块外的函数中加extern也不行）。</p>
+<p>3、在模块内的static函数只可以被模块内其他函数调用，此函数的作用域被限制在声明它的模块之中。</p>
+<p>综上：在全局变量前加上static则限制了其作用域（存储区均在全局区）；在局部变量前加static改变了其存储区（由栈上变为全局区）。<br>原文链接：<a href="https://blog.csdn.net/M_joy666/article/details/79779205" target="_blank" rel="noopener">https://blog.csdn.net/M_joy666/article/details/79779205</a></p>
+<h2 id="经典C语言面试题3：位域"><a href="#经典C语言面试题3：位域" class="headerlink" title="经典C语言面试题3：位域"></a>经典C语言面试题3：位域</h2><p>1、为什么要用位域？</p>
+<pre><code> 在计算机中，有些信息存储时并不需要占用一个完整的字节，而只需占用一个或几个二进制位。比如在存放一个只有0和1两种状态的开关量时，用一位二进制位即可表示。因此，为了节省存储空间，C语言提供了一种称为“位域”的数据结构来充分利用存储空间。
+
+位域的主要实现方式：把一个字节中的二进制位划分为几个不同的区域，并说明每个区域的位数，每个域有一个域名，允许在程序中按域名进行操作，这样就可以将几个不同的对象用一个字节的二进制位域表示。</code></pre><p>  2、 如何定义</p>
+<pre><code>位域的定义与结构体定义相似，形式如下：</code></pre><p>struct 位域结构名<br>{<br>  类型说明符 位域名: 位域长度;<br>};<br> 例如：</p>
+<p>struct time<br>{<br>   int a:8;<br>   int b:2;<br>   int c:6;<br>}data;//data为time变量，共占用2个字节<br> 注：位域变量的说明与结构体变量的说明方式相同。可以先定义后说明、同时定义说明以及直接说明三种方式。</p>
+<p> 使用注意事项：</p>
+<p>①、一个位域必须存储在同一个字节中，不能跨两个字节，如果一个字节所剩空间不够存放下一位域时，应该从下一个单元开      始，当然也可以有意调整使其从下一个单元开始；</p>
+<p>struct data<br>{<br>   unsigned a: 4;<br>   unsigned :0;//空域,用0填充4位<br>   unsigned b:4;<br>   unsigned c:4;<br>};</p>
+<p>②、位域长度不能大于一个字节的长度，即不能超过8位；</p>
+<p>③、可以定义无名位域用来做填充或调整位置。</p>
+<p>struct num<br>{<br>   int a:1;<br>   int :2;//无名位域，用来填充<br>   int b:3;<br>   int c:2:<br>};<br>3、如何调用</p>
+<pre><code>位域的调用方式和结构成员调用方式相同，形式为：
+
+位域变量名 . 位域名</code></pre><p>   一个完整的例子如下：</p>
+<p>#include&lt;stdio.h&gt;</p>
+<p>int  main()<br>{</p>
+<p>struct test<br>{<br>   unsigned a:1;<br>   unsigned b:3;<br>   unsigned c:4;<br>}tst,*ptst;<br>tst.a = 6;<br>tst.b = 6;<br>tst.c = 6;<br>printf(“a:%d,b:%d,c:%d\n”,tst.a,tst.b,tst.c);<br>ptst = &tst;<br>ptst-&gt;a = 8;<br>ptst-&gt;b = 8;<br>ptst-&gt;c = 8;<br>printf(“a:%d,b:%d,c:%d\n”,ptst-&gt;a,ptst-&gt;b,ptst-&gt;c);<br>return 0;<br>}</p>
+<p>综上：从本质上说，位域是一种结构类型，只不过其成员是按照二进制位来分配的。<br>————————————————<br>版权声明：本文为CSDN博主「喝橙汁的嗷大喵」的原创文章，遵循 CC 4.0 BY-SA 版权协议，转载请附上原文出处链接及本声明。<br>原文链接：<a href="https://blog.csdn.net/M_joy666/article/details/79779340" target="_blank" rel="noopener">https://blog.csdn.net/M_joy666/article/details/79779340</a></p>
+<h2 id="经典C语言面试题4：字节对齐的作用"><a href="#经典C语言面试题4：字节对齐的作用" class="headerlink" title="经典C语言面试题4：字节对齐的作用"></a>经典C语言面试题4：字节对齐的作用</h2><p>   一、什么是字节对齐？ </p>
+<pre><code>在现代计算机中，内存空间都是按照字节(byte)划分的。从理论上讲对任何类型的变量的访问可以从任何地址开始，但实际情况是，访问特定类型的变量的时候经常在特定的内存地址访问，这就需要各种类型的数据按照一定规则在空间上排列，而不是顺序地一个接一个地排放，这种所谓的规则就是字节对齐。这么长一段话的意思是说：字节对齐可以提升存取效率，也就是用空间换时间。</code></pre><p>例如：</p>
+<p>struct A<br>{<br>   char a;<br>   char reserved[3];//使用空间换时间<br>   int b;<br>};</p>
+<p><img src="https://img-blog.csdn.net/20180421171101857?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L01fam95NjY2/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70" alt="img"></p>
+<p>注：其中的reserved成员对于程序并没有意义，只是起到了填补空间达到字节对齐的目的。当然，即使不加这个成员，编译器也会自动为我们补齐，加上它只是起到显式提醒。</p>
+<p>二、为什么需要字节对齐？</p>
+<pre><code>因为各个硬件平台对存储空间的处理上有很大的不同，一些平台对某些特定类型的数据只能从某些特定地址开始存取。比如有些架构的CPU在访问一个没有进行对齐的变量的时候会发生错误,那么在这种架构下编程必须保证字节对齐.其他平台可能没有这种情况，但是最常见的是如果不按照适合其平台要求对数据存放进行对齐，会在存取效率上带来损失。比如有些平台每次读都是从偶地址开始，如果一个int型（假设为32位系统）如果存放在偶地址开始的地方，那么一个读周期就可以读出这32bit，而如果存放在奇地址开始的地方，就需要2个读周期，并对两次读出的结果的高低字节进行拼凑才能得到该32bit数据。显然在读取效率上下降很多。</code></pre><p>三、几个基本概念</p>
+<p>1、基本数据类型的自身对齐值</p>
+<pre><code>例如，char型数据的自身对齐值为1字节，short类型自身对齐值为2字节，int、float、long类型自身对齐值均为4字节，double类型自身对齐值均为8字节。（32位系统）</code></pre><p>2、结构体或类的自身对齐值</p>
+<pre><code>其成员中自身对齐值最大的那个值。</code></pre><p>3、指定对齐值</p>
+<pre><code>通过预编译指令 #pragma pack (value) 来指定的对齐值value。（注：取消自定义对齐值得指令为 #pragma pack ( )）</code></pre><p>4、数据成员、结构体和类的有效对齐值</p>
+<pre><code>其自身对齐值和指定对齐值中较小的那个值。</code></pre><p>四、字节对齐的几个例子浅析</p>
+<p>例1：设有如下两个结构体</p>
+<p>struct A<br>{<br>  char a;<br>  short b;<br>  int c;<br>};<br>struct B<br>{<br>  short b;<br>  int c;<br>  char a;<br>};<br>那么上面两个结构体的大小是多少呢？</p>
+<p>对于结构体A：a是char型数据，占用1字节内存；short型数据，占用2字节内存；int型数据，占用4字节内存。因此，结构体A的自身对齐值为4，sizeof(struct A) =8字节。由于结构体类型数据是按顺序存储结构一个接一个向后排列的，于是其存储方式为：</p>
+<p>为了更加明显地表示“对齐”，我们可以将以上结构想象为以下的行排列：</p>
+<p>对于结构体B：同理也是4字节对齐，但是sizeof(struct B) =12字节。</p>
+<p>想象为以下的行排列：</p>
+<p>例2：为结构体指定对齐值</p>
+<p>pragma pack(2) //指定2字节对齐</p>
+<p>struct C<br>{<br>  char a;<br>  int b;<br>  short c;<br>};</p>
+<p>pragma pack() //取消指定对齐，恢复缺省对齐</p>
+<p>对于结构体C：由于其自身对齐值为4字节（int b），而指定对齐值为2字节，因此该结构体的有效对齐值为较小的2字节，那么sizeof(struct C) = 8 字节。</p>
+<p>pragma pack(1) //指定1字节对齐</p>
+<p>struct D<br>{<br>  char a;<br>  int b;<br>  short c;<br>};</p>
+<p>pragma pack() //取消指定对齐，恢复缺省对齐</p>
+<p>对于结构体D：同理可知，由于其自身对齐值为4字节（int b），而指定对齐值为1字节，因此该结构体的有效对齐值为较小的1字节，那么sizeof(struct D) = 7 字节。</p>
+<p>​    </p>
+<p>五、总结</p>
+<p>由以上分析可知，字节对齐会造成空间上的浪费。 事实上，除了结构体之外，整个程序在给每个变量进行内存分配时都会遵循对齐机制，也都会产生内存空间的浪费。但我们要知道，这种浪费是值得的，因为它换来的是效率的提高。<br>————————————————<br>版权声明：本文为CSDN博主「喝橙汁的嗷大喵」的原创文章，遵循 CC 4.0 BY-SA 版权协议，转载请附上原文出处链接及本声明。<br>原文链接：<a href="https://blog.csdn.net/M_joy666/article/details/80030024" target="_blank" rel="noopener">https://blog.csdn.net/M_joy666/article/details/80030024</a></p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/09/26/C-面试题准备/" rel="next" title="C++面试题准备">
+                <i class="fa fa-chevron-left"></i> C++面试题准备
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/09/26/八大排序算法/" rel="prev" title="八大排序算法">
+                八大排序算法 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">John Doe</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">12</span>
+                  <span class="site-state-item-name">posts</span>
+                </a>
+              </div>
+            
+
+            
+
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#C语言编译过程为：预处理–-gt-编译–-gt-汇编–-gt-链接"><span class="nav-number">1.</span> <span class="nav-text">C语言编译过程为：预处理–&gt;编译–&gt;汇编–&gt;链接</span></a></li></ol><li class="nav-item nav-level-2"><a class="nav-link" href="#经典C语言面试题1：malloc-和-new的区别？"><span class="nav-number"></span> <span class="nav-text">经典C语言面试题1：malloc 和 new的区别？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#经典C语言面试题2：static关键字的用法"><span class="nav-number"></span> <span class="nav-text">经典C语言面试题2：static关键字的用法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#经典C语言面试题3：位域"><span class="nav-number"></span> <span class="nav-text">经典C语言面试题3：位域</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#经典C语言面试题4：字节对齐的作用"><span class="nav-number"></span> <span class="nav-text">经典C语言面试题4：字节对齐的作用</span></a></li></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">John Doe</span>
+
+  
+</div>
+
+
+  <div class="powered-by">Powered by <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a></div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Muse</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
